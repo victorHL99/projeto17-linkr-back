@@ -4,6 +4,7 @@ import sessionsRepository from "../repositories/sessionsRepository.js";
 import userRepository from "../repositories/userRepository.js";
 
 export async function createPublish(req, res){
+    console.log("passou aq")
     const {shared_url, message} = req.body;
     const {authorization} = req.headers;
     const token = authorization?.replace('Bearer ', '').trim();

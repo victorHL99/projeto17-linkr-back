@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-const publishSchema = joi.object({
+const publishSchema = Joi.object({
     shared_url: Joi.string().required().pattern(/^(http|https):\/\/[^ "]+$/),
     message: Joi.string()
 })
