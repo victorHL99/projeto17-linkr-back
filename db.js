@@ -26,14 +26,14 @@ export default db;
 // CONFIGURAÇÕES PARA TESTAR LOCAL
 
 
-import pg from 'pg';
+/* import pg from 'pg';
 import chalk from 'chalk';
 
 const {Pool} = pg;
 
 const user = 'postgres';
-const password = '164902';
-const host = '127.0.0.1';
+const password = 'postgres';
+const host = 'localhost';
 const port = 5432;
 const database = 'linkr';
 
@@ -48,3 +48,4 @@ const db = new Pool({
 console.log(chalk.green(`DATABASE CONNECTED`));
 
 export default db;
+ */
