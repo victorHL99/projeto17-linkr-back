@@ -5,7 +5,7 @@ dotenv.config()
 
 import authRepository from "../repositories/authRepository.js"
 
-export const postUser = async (req, res) => {
+export async function postUser(req, res) {
   const { username, email, password, profile_image } = req.body
   const hashedPassword = bcrypt.hashSync(password, 10)
   try {
@@ -21,7 +21,7 @@ export const postUser = async (req, res) => {
   }
 }
 
-export const postSignin = async (req, res) => {
+export async function postSignin(req, res) {
   const { user } = res.locals
   const secretKey = process.env.JWT_SECRET_KEY
   const token = jwt.sign(user, secretKey)

@@ -2,7 +2,7 @@ import bcrypt from "bcrypt"
 
 import authRepository from "../repositories/authRepository.js"
 
-export const signupMiddleware = async (req, res, next) => {
+export async function signupMiddleware(req, res, next) {
   const { email } = req.body
   try {
     const { rows: emails } = await authRepository.getEmail(email)
@@ -16,7 +16,7 @@ export const signupMiddleware = async (req, res, next) => {
   }
 }
 
-export const signinMiddleware = async (req, res, next) => {
+export async function signinMiddleware(req, res, next) {
   const { email, password } = req.body
   try {
     const { rows: users } = await authRepository.getUserByEmail(email)
