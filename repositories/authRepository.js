@@ -32,11 +32,22 @@ async function insertSession(userId, token) {
   )
 }
 
+async function getSessionByToken(token) {
+  return db.query(
+    `SELECT users.id, sessions.token
+    FROM sessions
+    JOIN users ON sessions.user_id = users.id
+    WHERE sessions.token = $1`,
+    [token],
+  )
+}
+
 const authRepository = {
   insertUserDb,
   getEmail,
   getUserByEmail,
   insertSession,
+  getSessionByToken,
 }
 
 export default authRepository
