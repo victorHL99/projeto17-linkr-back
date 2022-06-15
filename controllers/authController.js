@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
 dotenv.config()
 
-import db from "../config/db.js"
 import authRepository from "../repositories/authRepository.js"
 
 export const postUser = async (req, res) => {
@@ -27,12 +26,7 @@ export const postSignin = async (req, res) => {
   const secretKey = process.env.JWT_SECRET_KEY
   const token = jwt.sign(user, secretKey)
   try {
-    await db.query(
-      `
-      INSERT INTO sessions (user_id, token)
-      VALUES ($1, $2)`,
-      [user.id, token],
-    )
+    await authRepository.insertSession(user.id, token)
     delete user.id
     res.send({ ...user, token })
   } catch (e) {
