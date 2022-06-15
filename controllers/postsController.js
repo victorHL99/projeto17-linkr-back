@@ -7,7 +7,7 @@ export async function getPosts(req, res) {
 
   try {
     const result = await postsRepository.getPosts(limit, order, direction)
-    return res.send(result)
+    return res.send(result.rows)
   } catch (error) {
     verboseConsoleLog("Error:", error)
     return res.sendStatus(500)
