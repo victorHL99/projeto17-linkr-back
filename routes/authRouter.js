@@ -1,16 +1,25 @@
-import { Router } from "express";
+import { Router } from "express"
 
-import { postUser } from "../controllers/authController.js";
-import { signupMiddleware } from "../middlewares/authMiddleware.js";
-import { validateSchema } from "../middlewares/schemaValidator.js";
-import { signupSchema } from "../schemas/authSchema.js";
+import { postSignin, postUser } from "../controllers/authController.js"
+import {
+  signinMiddleware,
+  signupMiddleware,
+} from "../middlewares/authMiddleware.js"
+import { validateSchema } from "../middlewares/schemaValidator.js"
+import { signinSchema, signupSchema } from "../schemas/authSchema.js"
 
-const authRouter = Router();
+const authRouter = Router()
 authRouter.post(
   "/signup",
   validateSchema(signupSchema),
   signupMiddleware,
-  postUser
-);
+  postUser,
+)
+authRouter.post(
+  "/signin",
+  validateSchema(signinSchema),
+  signinMiddleware,
+  postSignin,
+)
 
-export default authRouter;
+export default authRouter
