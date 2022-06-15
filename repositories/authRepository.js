@@ -9,8 +9,13 @@ async function insertUserDb(username, email, hashedPassword, profile_image) {
   );
 }
 
+async function getEmail(email) {
+  return db.query("SELECT email FROM users WHERE email = $1", [email]);
+}
+
 const authRepository = {
   insertUserDb,
+  getEmail,
 };
 
 export default authRepository;

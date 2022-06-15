@@ -25,7 +25,7 @@ export default db;
 
 // CONFIGURAÇÕES PARA TESTAR LOCAL
 
-import pg from "pg";
+/*import pg from "pg";
 //import chalk from "chalk";
 import dotenv from "dotenv";
 
@@ -49,4 +49,4 @@ const db = new Pool({
 
 //console.log(chalk.green(`DATABASE CONNECTED`));
 
-export default db;
+export default db;*/
