@@ -10,11 +10,11 @@ async function getPosts(limit, order, direction = "DESC") {
     `SELECT 
     posts.id
     , posts.message
-    , posts.shared_url
-    , posts.created_at
+    , posts.shared_url as "sharedUrl"
+    , posts.created_at as "createdAt"
     , users.username
-    , users.profile_image
-    , count(likes.post_id) as likes_count
+    , users.profile_image as "profileImage"
+    , count(likes.post_id) as "likesCount"
     from posts
     LEFT JOIN likes on posts.id = likes.post_id
     JOIN users on users.id = posts.user_id
