@@ -8,14 +8,18 @@ async function getPosts(limit, order, direction = "DESC") {
 
   return db.query(
     `SELECT 
-  posts.*
-  , array_agg(hashtags.name)
-  FROM posts
-  
-  LEFT JOIN posts_hashtags as ph ON posts.id = ph.post_id
-  LEFT JOIN hashtags ON hashtags.id = ph.hashtag_id
-  WHERE posts.deleted IS NOT true
-  GROUP BY posts.id
+    posts.id
+    , posts.message
+    , posts.shared_url
+    , posts.created_at
+    , users.username
+    , users.profile_image
+    , count(likes.post_id) as likes_count
+    from posts
+    LEFT JOIN likes on posts.id = likes.post_id
+    JOIN users on users.id = posts.user_id
+    WHERE posts.deleted IS NOT true
+    GROUP BY posts.id, users.id
   ${orderClause}
   ${limitClause}`,
   )
