@@ -25,26 +25,28 @@ export default db;
 
 // CONFIGURAÇÕES PARA TESTAR LOCAL
 
+/*import pg from "pg";
+//import chalk from "chalk";
+import dotenv from "dotenv";
 
-import pg from 'pg';
-import chalk from 'chalk';
+dotenv.config();
 
-const {Pool} = pg;
+const { Pool } = pg;
 
-const user = 'postgres';
-const password = '181194';
-const host = 'localhost';
+const user = "postgres";
+const password = process.env.DATABASE_PASSWORD;
+const host = "localhost";
 const port = 5432;
-const database = 'linkr';
+const database = process.env.DATABASE;
 
 const db = new Pool({
-    host,
-    port,
-    user,
-    password,
-    database,
-})
+  host,
+  port,
+  user,
+  password,
+  database,
+});
 
-console.log(chalk.green(`DATABASE CONNECTED`));
+//console.log(chalk.green(`DATABASE CONNECTED`));
 
-export default db;
+export default db;*/
