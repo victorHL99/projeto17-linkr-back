@@ -4,7 +4,7 @@ import dotenv from "dotenv"
 import authRepository from "../repositories/authRepository.js"
 dotenv.config()
 
-export const tokenValidation = async (req, res, next) => {
+export async function tokenValidation(req, res, next) {
   const { authorization } = req.headers
   const token = authorization?.replace("Bearer ", "").trim()
   if (!token) {
