@@ -1,4 +1,4 @@
-import db from "../db.js";
+import db from "./../config/db.js";
 
 import sessionsRepository from "../repositories/sessionsRepository.js";
 import userRepository from "../repositories/userRepository.js";

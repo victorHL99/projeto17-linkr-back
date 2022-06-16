@@ -1,4 +1,4 @@
-import db from "../db.js";
+import db from "./../config/db.js";
 
 async function getIdUserByToken(token){
     return db.query(`

@@ -1,5 +1,4 @@
-import db from "../db.js";
-
+import db from "./../config/db.js";
 async function insertUserDb(username, email, hashedPassword, profile_image) {
   return db.query(
     `
