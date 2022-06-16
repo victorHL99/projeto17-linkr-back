@@ -1,11 +1,16 @@
 import { Router } from "express"
 
-import { postSignin, postUser } from "../controllers/authController.js"
+import {
+  postAutoLogin,
+  postSignin,
+  postUser,
+} from "../controllers/authController.js"
 import {
   signinMiddleware,
   signupMiddleware,
 } from "../middlewares/authMiddleware.js"
 import { validateSchema } from "../middlewares/schemaValidator.js"
+import { tokenValidation } from "../middlewares/tokenValidation.js"
 import { signinSchema, signupSchema } from "../schemas/authSchema.js"
 
 const authRouter = Router()
@@ -21,5 +26,6 @@ authRouter.post(
   signinMiddleware,
   postSignin,
 )
+authRouter.post("/auto-login", tokenValidation, postAutoLogin)
 
 export default authRouter

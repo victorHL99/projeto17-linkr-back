@@ -33,3 +33,11 @@ export async function postSignin(req, res) {
     return res.status(500).send(e.message)
   }
 }
+
+export async function postAutoLogin(req, res) {
+  try {
+    res.sendStatus(200)
+  } catch {
+    res.sendStatus(500)
+  }
+}
