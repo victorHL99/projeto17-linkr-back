@@ -25,10 +25,8 @@ async function getPosts(limit, order, direction = "DESC") {
   )
 }
 
-async function getPostsByHash(limit, order, direction = "DESC", hashtag) {
-  const limitClause = limit ? `LIMIT ${SqlString.escape(limit)}` : ""
-  const orderClause = order ? `ORDER BY posts.${order} ${direction}` : ""
-
+async function getPostsByHash(hashtag) {
+  
   return db.query(
     `SELECT 
     posts.id
@@ -43,10 +41,10 @@ async function getPostsByHash(limit, order, direction = "DESC", hashtag) {
     JOIN users on users.id = posts.user_id
     JOIN posts_hashtags ph ON ph.post_id = posts.id
     JOIN hashtags ON hashtags.id=ph.hashtag_id
-    WHERE posts.deleted IS NOT true AND hashtags.id=$1
+    WHERE posts.deleted IS NOT true AND hashtags.name=$1
     GROUP BY posts.id, users.id
-  ${orderClause}
-  ${limitClause}`,
+    ORDER BY posts.created_at DESC
+    LIMIT 20`,
   [hashtag]
   )
 }

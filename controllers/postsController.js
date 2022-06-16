@@ -14,3 +14,15 @@ export async function getPosts(req, res) {
   }
 }
 
+export async function getPostsByHashtag(req, res) {
+  const { hashtag } = req.params;
+
+  try {
+    const result = await postsRepository.getPostsByHash(hashtag)
+
+    return res.send(result.rows)
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+    return res.sendStatus(500)
+  }
+}
