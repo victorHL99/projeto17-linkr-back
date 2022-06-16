@@ -13,3 +13,4 @@ export async function getPosts(req, res) {
     return res.sendStatus(500)
   }
 }
+

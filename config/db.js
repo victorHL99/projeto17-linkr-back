@@ -1,25 +1,22 @@
-import pg from "pg"
-import dotenv from "dotenv"
-dotenv.config()
+import pg from 'pg';
+import chalk from 'chalk';
 
-const { Pool } = pg
+const {Pool} = pg;
 
-const devConfig = {
-  host: "localhost",
-  port: 5432,
-  user: process.env.POSTGRES_USERNAME,
-  password: process.env.POSTGRES_PASSWORD,
-  database: process.env.POSTGRES_DATABASE,
-}
+const user = 'postgres';
+const password = '181194';
+const host = 'localhost';
+const port = 5432;
+const database = 'linkr';
 
-const prodConfig = { connectionString: process.env.DATABASE_URL }
+const db = new Pool({
+    host,
+    port,
+    user,
+    password,
+    database,
+})
 
-if (process.env.MODE === "PROD") {
-  prodConfig.ssl = {
-    rejectUnauthorized: false,
-  }
-}
+console.log(chalk.green(`DATABASE CONNECTED`));
 
-const db = new Pool(process.env.MODE === "PROD" ? prodConfig : devConfig)
-
-export default db
+export default db;
