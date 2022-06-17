@@ -31,7 +31,6 @@ export async function getPosts(req, res) {
     }
 
     verboseConsoleLog("Result:", result.rows)
-
     return res.send(result.rows)
   } catch (error) {
     verboseConsoleLog("Error:", error)
