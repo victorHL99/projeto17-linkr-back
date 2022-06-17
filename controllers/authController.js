@@ -41,3 +41,13 @@ export async function postAutoLogin(req, res) {
     res.sendStatus(500)
   }
 }
+
+export async function deleteSession(req, res) {
+  try {
+    const { token } = res.locals
+    await authRepository.deleteSessionByToken(token)
+    res.sendStatus(200)
+  } catch {
+    res.sendStatus(500)
+  }
+}
