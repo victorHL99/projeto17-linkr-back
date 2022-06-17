@@ -28,7 +28,7 @@ export async function postSignin(req, res) {
   try {
     await authRepository.insertSession(user.id, token)
     delete user.id
-    res.send({ ...user, token })
+    res.send({ ...user, token})
   } catch (e) {
     return res.status(500).send(e.message)
   }
