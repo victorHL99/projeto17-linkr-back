@@ -2,15 +2,17 @@ import db from "./../config/db.js";
 
 
 export async function addLike(req, res) {
-    const { post_id, user_id } = req.body
-   
+    
+    const { post_id } = req.body
+    const { userId } = res.locals
+    console.log({post_id, userId})
     try {
 
         await db.query(`
         INSERT INTO likes ("user_id","post_id")
         VALUES($1,$2);
         `, [
-            user_id,
+            userId,
             post_id
         ]);
         const likes = await db.query(`
@@ -32,10 +34,12 @@ export async function addLike(req, res) {
 
 export async function deleteLike(req, res) {
 
-    const { user_id, post_id } = req.body
+    const { post_id } = req.params
+    const { userId } = res.locals
+    console.log({post_id, userId})
     try {
         await db.query(`
-        DELETE FROM likes WHERE user_id = $1 AND post_id = $2;`, [user_id, post_id]);
+        DELETE FROM likes WHERE user_id = $1 AND post_id = $2;`, [userId, post_id]);
 
         const likes = await db.query(`
         SELECT users.username, posts.id as post_id

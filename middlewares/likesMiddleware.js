@@ -4,7 +4,6 @@ export async function likesValidation(req, res, next) {
     console.log(req.body)
     const newLike = req.body;
     const likeSchema = joi.object({
-        user_id: joi.string().min(1).required(),
         post_id: joi.string().min(1).required()
     });
     const validation = likeSchema.validate(newLike);
