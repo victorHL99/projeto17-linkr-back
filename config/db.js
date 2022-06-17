@@ -6,11 +6,7 @@ dotenv.config()
 const { Pool } = pg
 
 const devConfig = {
-  host: process.env.DB_HOST,
-  port: 5432,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
+  connectionString: process.env.DATABASE_URL
 }
 
 const prodConfig = { connectionString: process.env.DATABASE_URL }
@@ -23,6 +19,6 @@ if (process.env.MODE === "PROD") {
 
 const db = new Pool(process.env.MODE === "PROD" ? prodConfig : devConfig)
 
-export default db; 
+export default db;
 
 
