@@ -3,6 +3,7 @@ import authRouter from "./authRouter.js";
 import likesRouter from "./likesRouter.js";
 import publishRouter from "./publishRouter.js";
 import trendingRouter from "./trendingRouter.js";
+import postsRouter from "./postsRouter.js";
 
 const router = Router()
 
