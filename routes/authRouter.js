@@ -1,6 +1,7 @@
 import { Router } from "express"
 
 import {
+  deleteSession,
   postAutoLogin,
   postSignin,
   postUser,
@@ -27,5 +28,6 @@ authRouter.post(
   postSignin,
 )
 authRouter.post("/auto-login", tokenValidation, postAutoLogin)
+authRouter.delete("/session", tokenValidation, deleteSession)
 
 export default authRouter

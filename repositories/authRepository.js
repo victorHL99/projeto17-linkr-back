@@ -42,12 +42,21 @@ async function getSessionByToken(token) {
   )
 }
 
+async function deleteSessionByToken(token) {
+  return db.query(
+    `DELETE FROM sessions
+    WHERE token = $1`,
+    [token],
+  )
+}
+
 const authRepository = {
   insertUserDb,
   getEmail,
   getUserByEmail,
   insertSession,
   getSessionByToken,
+  deleteSessionByToken,
 }
 
 export default authRepository

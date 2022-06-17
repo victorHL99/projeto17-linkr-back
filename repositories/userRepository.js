@@ -12,8 +12,20 @@ async function getIdUserByToken(token) {
   )
 }
 
+async function getUserById(userId) {
+  return db.query(
+    `
+    SELECT users.username
+    , users.profile_image as "profileImage" 
+    FROM users
+    WHERE users.id = $1`,
+    [userId],
+  )
+}
+
 const userRepository = {
   getIdUserByToken,
+  getUserById,
 }
 
 export default userRepository

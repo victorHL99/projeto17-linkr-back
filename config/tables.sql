@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS public.users
     username text NOT NULL,
     password text NOT NULL,
     profile_image text NOT NULL,
-    created_at time without time zone DEFAULT NOW(),
+    created_at timestamp without time zone DEFAULT NOW(),
     email text NOT NULL,
     PRIMARY KEY (id),
     UNIQUE (username),
@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS public.sessions
     id serial NOT NULL,
     user_id integer NOT NULL,
     token text NOT NULL,
+    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id),
     UNIQUE (token)
 );
@@ -31,7 +32,7 @@ CREATE TABLE IF NOT EXISTS public.posts
     user_id integer NOT NULL,
     message text NOT NULL,
     shared_url text NOT NULL,
-    created_at time without time zone NOT NULL DEFAULT NOW(),
+    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     deleted boolean NOT NULL DEFAULT false,
     PRIMARY KEY (id)
 );
@@ -50,6 +51,7 @@ CREATE TABLE IF NOT EXISTS public.posts_hashtags
     id serial NOT NULL,
     post_id integer NOT NULL,
     hashtag_id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id)
 );
 
@@ -58,6 +60,7 @@ CREATE TABLE IF NOT EXISTS public.likes
     id serial NOT NULL,
     user_id integer NOT NULL,
     post_id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id)
 );
 
