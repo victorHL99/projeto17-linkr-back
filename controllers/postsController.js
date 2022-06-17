@@ -6,9 +6,15 @@ import verboseConsoleLog from "../utils/verboseConsoleLog.js"
 
 export async function getPosts(req, res) {
   const { limit, order, direction } = req.query
+  const { userId } = req.params
 
   try {
-    const result = await postsRepository.getPosts(limit, order, direction)
+    const result = await postsRepository.getPosts(
+      limit,
+      order,
+      direction,
+      userId,
+    )
 
     for (let i in result.rows) {
       const post = result.rows[i]
@@ -23,6 +29,8 @@ export async function getPosts(req, res) {
         console.log(error)
       }
     }
+
+    verboseConsoleLog("Result:", result.rows)
 
     return res.send(result.rows)
   } catch (error) {
