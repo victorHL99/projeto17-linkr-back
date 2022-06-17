@@ -2,8 +2,8 @@ import db from "./../config/db.js";
 
 
 export async function addLike(req, res) {
-    const { post_id } = req.body
-    const user_id = localStorage.getItem("id")
+    const { post_id, user_id } = req.body
+   
     try {
 
         await db.query(`
