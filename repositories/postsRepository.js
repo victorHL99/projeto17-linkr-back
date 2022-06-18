@@ -62,10 +62,19 @@ async function deletePostById(id) {
   )
 }
 
+async function getPostByUserId(userId, id) {
+  return db.query(
+    `SELECT id FROM posts 
+    WHERE "user_id" = $1 AND id = $2`,
+    [userId, id],
+  )
+}
+
 const postsRepository = {
   getPosts,
   getPostsByHash,
   deletePostById,
+  getPostByUserId,
 }
 
 export default postsRepository
