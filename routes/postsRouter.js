@@ -6,5 +6,6 @@ const postsRouter = Router()
 
 postsRouter.get("/posts", getPosts)
 postsRouter.get("/hashtag/:hashtag", getPostsByHashtag)
+postsRouter.get("/posts/:userId", getPosts)
 
 export default postsRouter
