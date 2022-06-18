@@ -32,7 +32,6 @@ ${limitClause}`
 }
 
 async function getPostsByHash(hashtag) {
-  
   return db.query(
     `SELECT 
     posts.id
@@ -51,13 +50,31 @@ async function getPostsByHash(hashtag) {
     GROUP BY posts.id, users.id
     ORDER BY posts.created_at DESC
     LIMIT 20`,
-  [hashtag]
+    [hashtag],
+  )
+}
+
+async function deletePostById(id) {
+  return db.query(
+    `UPDATE posts SET deleted=true
+    WHERE id = $1`,
+    [id],
+  )
+}
+
+async function getPostByUserId(userId, id) {
+  return db.query(
+    `SELECT id FROM posts 
+    WHERE "user_id" = $1 AND id = $2`,
+    [userId, id],
   )
 }
 
 const postsRepository = {
   getPosts,
   getPostsByHash,
+  deletePostById,
+  getPostByUserId,
 }
 
 export default postsRepository
