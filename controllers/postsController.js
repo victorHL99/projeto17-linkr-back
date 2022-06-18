@@ -39,7 +39,7 @@ export async function getPosts(req, res) {
 }
 
 export async function getPostsByHashtag(req, res) {
-  const { hashtag } = req.params;
+  const { hashtag } = req.params
 
   try {
     const result = await postsRepository.getPostsByHash(hashtag)
@@ -48,5 +48,15 @@ export async function getPostsByHashtag(req, res) {
   } catch (error) {
     verboseConsoleLog("Error:", error)
     return res.sendStatus(500)
+  }
+}
+
+export async function deletePost(req, res) {
+  const { id } = req.params
+  try {
+    await postsRepository.deletePostById(id)
+    res.sendStatus(204)
+  } catch (e) {
+    return res.status(500).send(e.message)
   }
 }
