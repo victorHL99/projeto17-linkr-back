@@ -19,7 +19,7 @@ async function getPosts(
   , posts.created_at as "createdAt"
   , users.username
   , users.profile_image as "profileImage"
-  , count(likes.post_id) as "likesCount"
+  , count(likes.post_id)::integer as "likesCount"
   from posts
   LEFT JOIN likes on posts.id = likes.post_id
   JOIN users on users.id = posts.user_id
@@ -27,6 +27,8 @@ async function getPosts(
   GROUP BY posts.id, users.id
 ${orderClause}
 ${limitClause}`
+
+  console.log("🚀 ~ queryText", queryText)
 
   return db.query(queryText)
 }
