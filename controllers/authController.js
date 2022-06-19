@@ -6,14 +6,14 @@ dotenv.config()
 import authRepository from "../repositories/authRepository.js"
 
 export async function postUser(req, res) {
-  const { username, email, password, profile_image } = req.body
+  const { username, email, password, profileImage } = req.body
   const hashedPassword = bcrypt.hashSync(password, 10)
   try {
     await authRepository.insertUserDb(
       username,
       email,
       hashedPassword,
-      profile_image,
+      profileImage,
     )
     res.sendStatus(201)
   } catch (e) {
@@ -27,7 +27,6 @@ export async function postSignin(req, res) {
   const token = jwt.sign(user, secretKey)
   try {
     await authRepository.insertSession(user.id, token)
-    delete user.id
     res.send({ ...user, token })
   } catch (e) {
     return res.status(500).send(e.message)

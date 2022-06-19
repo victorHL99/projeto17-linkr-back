@@ -14,6 +14,7 @@ async function getPosts(
 
   const queryText = `SELECT 
   posts.id
+  , posts.user_id as "userId"
   , posts.message
   , posts.shared_url as "sharedUrl"
   , posts.created_at as "createdAt"
