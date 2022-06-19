@@ -10,8 +10,7 @@ export async function getUserBySearch(req, res){
     const resultUsers = await searchBarRepository.getUserByName(name);
     
     res.status(200).send(resultUsers.rows);
-    return resultUsers.rows;
   } catch(err){
-    return res.status(500).send(err.message);
+    res.status(500).send(err.message);
   }
 }
