@@ -20,6 +20,7 @@ async function getPosts(
   , users.username
   , users.profile_image as "profileImage"
   , count(likes.post_id) as "likesCount"
+  , posts.user_id as "postUserId"
   from posts
   LEFT JOIN likes on posts.id = likes.post_id
   JOIN users on users.id = posts.user_id
