@@ -28,8 +28,6 @@ async function getPosts(
 ${orderClause}
 ${limitClause}`
 
-  console.log("🚀 ~ queryText", queryText)
-
   return db.query(queryText)
 }
 
