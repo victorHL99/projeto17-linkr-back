@@ -23,15 +23,15 @@ async function getUserById(userId) {
   )
 }
 
-async function getUserByName(name) {
+async function getUserByName(nameSearched) {
   return(
-    db.query(db.query(`
+    db.query(`
     SELECT username AS "userName",
     id AS "userId",
     profile_image AS "profileImage"
     from users 
     WHERE username 
-    LIKE '%$1%'`,[name]))
+    LIKE $1`, [`%${nameSearched}%`])
   )
 }
 

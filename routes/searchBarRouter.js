@@ -6,6 +6,6 @@ import { getUserBySearch } from "../controllers/userController.js";
 
 const searchBarRouter = Router();
 
-searchBarRouter.get("/search/:name", tokenValidation, getUserBySearch);
+searchBarRouter.get("/search/:nameSearched", tokenValidation, getUserBySearch);
 
 export default searchBarRouter;
