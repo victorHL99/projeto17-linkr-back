@@ -8,7 +8,7 @@ async function getUserByName(name) {
     profile_image AS "profileImage"
     from users 
     WHERE username 
-    LIKE '%$1%'`,[name]));
+    LIKE '%$1%'`,[name]))
   )
 }
 
