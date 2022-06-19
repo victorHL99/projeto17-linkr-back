@@ -32,7 +32,6 @@ ${limitClause}`
   return db.query(queryText)
 }
 
-<<<<<<< HEAD
 async function createPost(userId, sharedUrl, message) {
   return db.query(
     `INSERT INTO posts ("user_id", "shared_url", "message") 
@@ -43,21 +42,26 @@ async function createPost(userId, sharedUrl, message) {
 }
 
 async function getLastPost(message) {
-=======
-async function getPostsByHash(hashtag) {
->>>>>>> 41d8e8234281dc2d542877c5eca10d818b30b3d5
   return db.query(
     `SELECT 
     posts.id
     , posts.message
     , posts.shared_url as "sharedUrl"
     , posts.created_at as "createdAt"
-<<<<<<< HEAD
   FROM posts 
   WHERE posts.message = $1 
   LIMIT 1`,
     [message],
-=======
+  )
+}
+
+async function getPostsByHash(hashtag) {
+  return db.query(
+    `SELECT 
+    posts.id
+    , posts.message
+    , posts.shared_url as "sharedUrl"
+    , posts.created_at as "createdAt"
     , users.username
     , users.profile_image as "profileImage"
     , count(likes.post_id) as "likesCount"
@@ -87,20 +91,16 @@ async function getPostByUserId(userId, id) {
     `SELECT id FROM posts 
     WHERE "user_id" = $1 AND id = $2`,
     [userId, id],
->>>>>>> 41d8e8234281dc2d542877c5eca10d818b30b3d5
   )
 }
 
 const postsRepository = {
   getPosts,
-<<<<<<< HEAD
   createPost,
   getLastPost,
-=======
   getPostsByHash,
   deletePostById,
   getPostByUserId,
->>>>>>> 41d8e8234281dc2d542877c5eca10d818b30b3d5
 }
 
 export default postsRepository
