@@ -27,7 +27,6 @@ export async function postSignin(req, res) {
   const token = jwt.sign(user, secretKey)
   try {
     await authRepository.insertSession(user.id, token)
-    delete user.id
     res.send({ ...user, token })
   } catch (e) {
     return res.status(500).send(e.message)
