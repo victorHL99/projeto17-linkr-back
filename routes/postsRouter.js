@@ -12,6 +12,8 @@ import { userPostMiddleware } from "../middlewares/postsMiddleware.js"
 
 import { validateSchema } from "../middlewares/schemaValidator.js"
 import { tokenValidation } from "../middlewares/tokenValidation.js"
+import { validateSchema } from "../middlewares/schemaValidator.js"
+import newPostSchema from "../schemas/newPostSchema.js"
 
 import newPostSchema from "../schemas/newPostSchema.js"
 

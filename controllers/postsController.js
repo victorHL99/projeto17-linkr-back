@@ -149,9 +149,9 @@ export async function deletePost(req, res) {
 export async function updatePost(req, res) {
   const { id } = req.params
   const { userId } = res.locals
-  const { message, sharedUrl } = req.body 
+  const { message, sharedUrl } = req.body
   try {
-    await postsRepository.updatePost(id ,message, userId, sharedUrl)
+    await postsRepository.updatePost(id, message, userId, sharedUrl)
     res.sendStatus(204)
   } catch (e) {
     return res.status(500).send(e.message)
