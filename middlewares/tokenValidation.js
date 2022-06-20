@@ -27,6 +27,7 @@ export async function tokenValidation(req, res, next) {
     if (!userSession?.id) {
       return res.status(401).send("User not found!")
     }
+  
     res.locals.userId = userSession.id
     res.locals.token = token
     next()
