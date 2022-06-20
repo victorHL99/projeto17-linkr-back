@@ -95,15 +95,6 @@ async function getPostByUserId(userId, id) {
   )
 }
 
-
-async function updatePost(id, message, userId, sharedUrl) {
- 
-  return db.query(
-    `UPDATE posts SET message=$1, shared_url=$2 WHERE user_id=$3 AND id=$4;`,
-    [message, sharedUrl, userId, id],
-  )
-}
-
 async function getHashtagByName(hashtag) {
   return db.query(
     `SELECT * 
@@ -142,7 +133,12 @@ async function createRelationHashtagPost(postId, hashtagId) {
   RETURNING id`
 
   return db.query(queryText)
+}
 
+async function updatePost(id ,message, userId) {
+  return db.query (`UPDATE posts
+  SET  message =$2
+  WHERE id=$1 AND user_id=$3`, [id, message, userId],)
 }
 
 const postsRepository = {
@@ -152,11 +148,11 @@ const postsRepository = {
   getPostsByHash,
   deletePostById,
   getPostByUserId,
-  updatePost,
   getHashtagByName,
   createHashtags,
   getAllHashtags,
   createRelationHashtagPost,
+  updatePost,
 }
 
 export default postsRepository
