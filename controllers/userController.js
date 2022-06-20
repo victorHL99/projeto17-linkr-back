@@ -14,15 +14,15 @@ export async function getUser(req, res) {
   }
 }
 
-export async function getUserBySearch(req, res){
-  const {nameSearched} = req.params;
+export async function getUserByUsername(req, res) {
+  const { username } = req.query
 
-  try{
-    const resultUsers = await userRepository.getUserByName(nameSearched);
+  try {
+    const resultUsers = await userRepository.getUserByUsername(username)
     verboseConsoleLog("Result:", resultUsers.rows)
-    return res.status(200).send(resultUsers.rows);
-  } catch(error){
+    return res.status(200).send(resultUsers.rows)
+  } catch (error) {
     verboseConsoleLog("Error:", error)
-    return res.status(500).send(error);
+    return res.status(500).send(error)
   }
 }

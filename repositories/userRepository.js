@@ -23,22 +23,22 @@ async function getUserById(userId) {
   )
 }
 
-async function getUserByName(nameSearched) {
+async function getUserByUsername(username) {
   return(
     db.query(`
-    SELECT username AS "userName",
+    SELECT username,
     id AS "userId",
     profile_image AS "profileImage"
     from users 
     WHERE username 
-    LIKE $1`, [`%${nameSearched}%`])
+    LIKE $1`, [`%${username}%`])
   )
 }
 
 const userRepository = {
   getIdUserByToken,
   getUserById,
-  getUserByName,
+  getUserByUsername,
 }
 
 export default userRepository
