@@ -2,7 +2,6 @@ import { likesRepository } from "../repositories/likesRepository.js"
 import verboseConsoleLog from "./../utils/verboseConsoleLog.js"
 
 export async function isLikedByUser(req, res) {
-  console.log("🚀 ~ isLikedByUser", isLikedByUser)
   const { postId } = req.params
   const { userId } = res.locals
 
