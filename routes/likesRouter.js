@@ -1,12 +1,19 @@
 import { Router } from "express"
-import { likesValidation } from "../middlewares/likesMiddleware.js"
-import { addLike, getLikedByWho } from "../controllers/likesController.js"
-import { deleteLike } from "../controllers/likesController.js"
+
+import {
+  addLike,
+  deleteLike,
+  getLikedByWho,
+  isLikedByUser,
+} from "../controllers/likesController.js"
+
+import { tokenValidation } from "./../middlewares/tokenValidation.js"
 
 const likesRouter = Router()
 
-likesRouter.post("/likes", likesValidation, addLike)
-likesRouter.delete("/likes", likesValidation, deleteLike)
 likesRouter.get("/likes", getLikedByWho)
+likesRouter.get("/likes/:postId", tokenValidation, isLikedByUser)
+likesRouter.post("/likes/:postId", tokenValidation, addLike)
+likesRouter.delete("/likes/:postId", tokenValidation, deleteLike)
 
 export default likesRouter
