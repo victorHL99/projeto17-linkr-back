@@ -95,7 +95,7 @@ async function getPostByUserId(userId, id) {
 }
 
 async function updatePost(id, message, userId, sharedUrl) {
-  console.log("Cheguei aqui",id, message, userId, sharedUrl)
+ 
   return db.query(
     `UPDATE posts SET message=$1, shared_url=$2 WHERE user_id=$3 AND id=$4;`,
     [message, sharedUrl, userId, id],
