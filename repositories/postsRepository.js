@@ -50,6 +50,7 @@ async function getLastPost(message) {
     , posts.created_at as "createdAt"
   FROM posts 
   WHERE posts.message = $1 
+  ORDER BY posts.id DESC
   LIMIT 1`,
     [message],
   )
@@ -94,6 +95,46 @@ async function getPostByUserId(userId, id) {
   )
 }
 
+async function getHashtagByName(hashtag) {
+  return db.query(
+    `SELECT * 
+    FROM hashtags 
+    WHERE hashtags.name = $1`,
+    [hashtag],
+  )
+}
+
+async function getAllHashtags() {
+  return db.query(
+    `SELECT * 
+    FROM hashtags`,
+  )
+}
+
+async function createHashtags(hashtags) {
+  const valuesText = hashtags.reduce((acc, hashtag, index) => {
+    if (index === hashtags.length - 1)
+      return (acc += `(${SqlString.escape(hashtag)})`)
+    else return (acc += `(${SqlString.escape(hashtag)}), `)
+  }, "")
+
+  const queryText = `INSERT INTO 
+  hashtags (name) 
+  VALUES ${valuesText}
+  RETURNING id`
+
+  return db.query(queryText)
+}
+
+async function createRelationHashtagPost(postId, hashtagId) {
+  const queryText = `INSERT INTO 
+  posts_hashtags (post_id, hashtag_id) 
+  VALUES (${postId}, ${hashtagId})
+  RETURNING id`
+
+  return db.query(queryText)
+}
+
 const postsRepository = {
   getPosts,
   createPost,
@@ -101,6 +142,10 @@ const postsRepository = {
   getPostsByHash,
   deletePostById,
   getPostByUserId,
+  getHashtagByName,
+  createHashtags,
+  getAllHashtags,
+  createRelationHashtagPost,
 }
 
 export default postsRepository
