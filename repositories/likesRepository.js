@@ -19,6 +19,40 @@ async function getLikedByWho(postId, limit = 5) {
   return db.query(queryText, params)
 }
 
+async function addLike(userId, postId) {
+  const queryText = `INSERT INTO 
+  likes ("user_id","post_id")
+  VALUES($1,$2)`
+
+  const params = [userId, postId]
+
+  return db.query(queryText, params)
+}
+
+async function deleteLike(userId, postId) {
+  const queryText = `DELETE 
+  FROM likes 
+  WHERE user_id = $1 
+  AND post_id = $2`
+
+  const params = [userId, postId]
+
+  return db.query(queryText, params)
+}
+
+async function isLikedByUser(userId, postId) {
+  const queryText = `SELECT likes.* 
+  FROM likes
+  WHERE likes.user_id = $1 AND likes.post_id = $2
+  `
+  const params = [userId, postId]
+
+  return db.query(queryText, params)
+}
+
 export const likesRepository = {
   getLikedByWho,
+  addLike,
+  deleteLike,
+  isLikedByUser,
 }
