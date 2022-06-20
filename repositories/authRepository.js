@@ -1,24 +1,25 @@
 import db from "../config/db.js"
 
-async function insertUserDb(username, email, hashedPassword, profile_image) {
+async function insertUserDb(username, email, hashedPassword, profileImage) {
   return db.query(
     `INSERT INTO users (username, email, password, profile_image)
     VALUES ($1, $2, $3, $4)`,
-    [username, email, hashedPassword, profile_image],
+    [username, email, hashedPassword, profileImage],
   )
 }
 
-async function getEmail(email) {
+async function getEmail(email, username) {
   return db.query(
-    `SELECT email 
-    FROM users WHERE email = $1`,
-    [email],
+    `SELECT email, username
+    FROM users 
+    WHERE email = $1 OR username = $2`,
+    [email, username],
   )
 }
 
 async function getUserByEmail(email) {
   return db.query(
-    `SELECT id, username, email, password, profile_image 
+    `SELECT id, username, email, password, profile_image AS "profileImage"
     FROM users WHERE email = $1`,
     [email],
   )

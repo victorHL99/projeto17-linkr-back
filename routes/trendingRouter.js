@@ -1,9 +1,9 @@
-import {Router} from 'express';
+import { Router } from "express"
 
-import { getTrendinds } from '../controllers/trendingController.js';
+import { getTrendings } from "../controllers/trendingController.js"
 
-const trendingRouter = Router();
+const trendingRouter = Router()
 
-trendingRouter.get('/trending', getTrendinds);
+trendingRouter.get("/trending", getTrendings)
 
-export default trendingRouter;
+export default trendingRouter

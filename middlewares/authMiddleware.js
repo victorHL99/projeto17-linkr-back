@@ -3,12 +3,12 @@ import bcrypt from "bcrypt"
 import authRepository from "../repositories/authRepository.js"
 
 export async function signupMiddleware(req, res, next) {
-  const { email } = req.body
+  const { email, username } = req.body
   try {
-    const { rows: emails } = await authRepository.getEmail(email)
+    const { rows: emails } = await authRepository.getEmail(email, username)
     const [emailConflict] = emails
     if (emailConflict) {
-      return res.status(422).send("Email already exists!")
+      return res.status(422).send("Email/Username already exists!")
     }
     next()
   } catch (e) {

@@ -14,6 +14,7 @@ async function getPosts(
 
   const queryText = `SELECT 
   posts.id
+  , posts.user_id as "userId"
   , posts.message
   , posts.shared_url as "sharedUrl"
   , posts.created_at as "createdAt"
@@ -29,6 +30,30 @@ ${orderClause}
 ${limitClause}`
 
   return db.query(queryText)
+}
+
+async function createPost(userId, sharedUrl, message) {
+  return db.query(
+    `INSERT INTO posts ("user_id", "shared_url", "message") 
+          VALUES ($1,$2,$3);
+          `,
+    [userId, sharedUrl, message],
+  )
+}
+
+async function getLastPost(message) {
+  return db.query(
+    `SELECT 
+    posts.id
+    , posts.message
+    , posts.shared_url as "sharedUrl"
+    , posts.created_at as "createdAt"
+  FROM posts 
+  WHERE posts.message = $1 
+  ORDER BY posts.id DESC
+  LIMIT 1`,
+    [message],
+  )
 }
 
 async function getPostsByHash(hashtag) {
@@ -70,24 +95,68 @@ async function getPostByUserId(userId, id) {
   )
 }
 
-export async function updatePost(req, res) {
-  const { id } = req.params
-  const { userId } = res.locals
-  const { message, sharedUrl } = req.body
-  try {
-    await postsRepository.updatePost(id, message, userId, sharedUrl)
-    res.sendStatus(204)
-  } catch (e) {
-    return res.status(500).send(e.message)
-  }
+
+async function updatePost(id, message, userId, sharedUrl) {
+ 
+  return db.query(
+    `UPDATE posts SET message=$1, shared_url=$2 WHERE user_id=$3 AND id=$4;`,
+    [message, sharedUrl, userId, id],
+  )
+}
+
+async function getHashtagByName(hashtag) {
+  return db.query(
+    `SELECT * 
+    FROM hashtags 
+    WHERE hashtags.name = $1`,
+    [hashtag],
+  )
+}
+
+async function getAllHashtags() {
+  return db.query(
+    `SELECT * 
+    FROM hashtags`,
+  )
+}
+
+async function createHashtags(hashtags) {
+  const valuesText = hashtags.reduce((acc, hashtag, index) => {
+    if (index === hashtags.length - 1)
+      return (acc += `(${SqlString.escape(hashtag)})`)
+    else return (acc += `(${SqlString.escape(hashtag)}), `)
+  }, "")
+
+  const queryText = `INSERT INTO 
+  hashtags (name) 
+  VALUES ${valuesText}
+  RETURNING id`
+
+  return db.query(queryText)
+}
+
+async function createRelationHashtagPost(postId, hashtagId) {
+  const queryText = `INSERT INTO 
+  posts_hashtags (post_id, hashtag_id) 
+  VALUES (${postId}, ${hashtagId})
+  RETURNING id`
+
+  return db.query(queryText)
+
 }
 
 const postsRepository = {
   getPosts,
+  createPost,
+  getLastPost,
   getPostsByHash,
   deletePostById,
   getPostByUserId,
   updatePost,
+  getHashtagByName,
+  createHashtags,
+  getAllHashtags,
+  createRelationHashtagPost,
 }
 
 export default postsRepository

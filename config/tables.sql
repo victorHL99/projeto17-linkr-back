@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS public.posts
 (
     id serial NOT NULL,
     user_id integer NOT NULL,
-    message text NOT NULL,
+    message text,
     shared_url text NOT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     deleted boolean NOT NULL DEFAULT false,
@@ -61,7 +61,8 @@ CREATE TABLE IF NOT EXISTS public.likes
     user_id integer NOT NULL,
     post_id integer NOT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    CONSTRAINT both_user_and_post_unique UNIQUE (user_id, post_id)
 );
 
 ALTER TABLE IF EXISTS public.sessions

@@ -1,60 +1,17 @@
-import db from "./../config/db.js"
-
 import { likesRepository } from "../repositories/likesRepository.js"
 import verboseConsoleLog from "./../utils/verboseConsoleLog.js"
 
-export async function addLike(req, res) {
-  const { post_id } = req.body
-  const user_id = localStorage.getItem("id")
+export async function isLikedByUser(req, res) {
+  const { postId } = req.params
+  const { userId } = res.locals
+
   try {
-    await db.query(
-      `
-        INSERT INTO likes ("user_id","post_id")
-        VALUES($1,$2);
-        `,
-      [user_id, post_id],
-    )
-    const likes = await db.query(
-      `
-        SELECT users.username, posts.id as post_id
-        FROM likes
-        JOIN users ON users.id = likes.user_id
-        JOIN posts ON posts.id = likes.post_id
-        WHERE likes.post_id=$1
-        GROUP BY post_id, posts.id,users.id,users."username"; `,
-      [post_id],
-    )
+    const result = await likesRepository.isLikedByUser(userId, postId)
 
-    res.status(201).send(likes.rows)
+    res.send(!!result.rowCount)
   } catch (error) {
-    console.log(error)
-    res.status(422).send(error)
-  }
-}
-
-export async function deleteLike(req, res) {
-  const { user_id, post_id } = req.body
-  try {
-    await db.query(
-      `
-        DELETE FROM likes WHERE user_id = $1 AND post_id = $2;`,
-      [user_id, post_id],
-    )
-
-    const likes = await db.query(
-      `
-        SELECT users.username, posts.id as post_id
-        FROM likes
-        JOIN users ON users.id = likes.user_id
-        JOIN posts ON posts.id = likes.post_id
-        WHERE likes.post_id=$1
-        GROUP BY post_id, posts.id,users.id,users."username"; `,
-      [post_id],
-    )
-
-    res.status(201).send(likes.rows)
-  } catch (error) {
-    res.status(422).send(error)
+    verboseConsoleLog("Error:", error)
+    return res.sendStatus(500)
   }
 }
 
@@ -63,10 +20,39 @@ export async function getLikedByWho(req, res) {
 
   try {
     const result = await likesRepository.getLikedByWho(postId, limit)
-    console.log("🚀 ~ likesBy", result.rows[0])
+
     res.send(result.rows[0])
   } catch (error) {
     verboseConsoleLog("Error:", error)
     res.sendStatus(500)
+  }
+}
+
+export async function addLike(req, res) {
+  const { postId } = req.params
+  const { userId } = res.locals
+  try {
+    const result = await likesRepository.addLike(userId, postId)
+
+    if (result.rowCount === 1) return res.sendStatus(201)
+    else return res.sendStatus(500)
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+    if (error.code === "23505") return res.sendStatus(409)
+    return res.sendStatus(500)
+  }
+}
+
+export async function deleteLike(req, res) {
+  const { postId } = req.params
+  const { userId } = res.locals
+  try {
+    const result = await likesRepository.deleteLike(userId, postId)
+
+    if (result.rowCount === 1) return res.sendStatus(201)
+    else return res.sendStatus(500)
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+    return res.sendStatus(500)
   }
 }
