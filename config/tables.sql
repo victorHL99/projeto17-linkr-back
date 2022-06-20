@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS public.posts
     shared_url text NOT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     deleted boolean NOT NULL DEFAULT false,
+    shared_post_id integer,
     PRIMARY KEY (id)
 );
 
@@ -65,6 +66,24 @@ CREATE TABLE IF NOT EXISTS public.likes
     CONSTRAINT both_user_and_post_unique UNIQUE (user_id, post_id)
 );
 
+CREATE TABLE IF NOT EXISTS public.comments
+(
+    id serial NOT NULL,
+    post_id integer NOT NULL,
+    user_id integer NOT NULL,
+    message text NOT NULL,
+    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.follows
+(
+    id serial NOT NULL,
+    followed_id integer NOT NULL,
+    follower_id integer NOT NULL,
+    PRIMARY KEY (id)
+);
+
 ALTER TABLE IF EXISTS public.sessions
     ADD FOREIGN KEY (user_id)
     REFERENCES public.users (id) MATCH SIMPLE
@@ -76,6 +95,14 @@ ALTER TABLE IF EXISTS public.sessions
 ALTER TABLE IF EXISTS public.posts
     ADD FOREIGN KEY (user_id)
     REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.posts
+    ADD FOREIGN KEY (shared_post_id)
+    REFERENCES public.posts (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
@@ -108,6 +135,38 @@ ALTER TABLE IF EXISTS public.likes
 ALTER TABLE IF EXISTS public.likes
     ADD FOREIGN KEY (post_id)
     REFERENCES public.posts (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.comments
+    ADD FOREIGN KEY (post_id)
+    REFERENCES public.posts (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.comments
+    ADD FOREIGN KEY (user_id)
+    REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.follows
+    ADD FOREIGN KEY (followed_id)
+    REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.follows
+    ADD FOREIGN KEY (follower_id)
+    REFERENCES public.users (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
