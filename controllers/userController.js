@@ -1,5 +1,6 @@
 import userRepository from "../repositories/userRepository.js"
 import verboseConsoleLog from "../utils/verboseConsoleLog.js"
+import followRepository from "../repositories/followRepository.js"
 
 export async function getUser(req, res) {
   const { userId } = req.params
@@ -24,5 +25,41 @@ export async function getUserByUsername(req, res) {
   } catch (error) {
     verboseConsoleLog("Error:", error)
     return res.status(500).send(error)
+  }
+}
+
+//TODO - implementar messagens em ingles
+export async function followUser(req, res) {
+  const { userId } = res.locals
+  const { followedId } = req.params
+
+  if (userId !== followedId) {
+    try {
+      const resultVerifyFollow = await followRepository.verifyFollowUser(
+        userId,
+        followedId,
+      ) // resultado da query se existe ou não // TODO - TESTAR
+      if (resultVerifyFollow.rows > 0) {
+        return res
+          .status(400)
+          .send({ message: "Usuário já seguido" }, resultFollow.rows)
+      } else {
+        const resultFollow = await followRepository.followUser(
+          userId,
+          followedId,
+        ) // QUERY PARA INSERIR NO BANCO NOVO SEGUIDOR // TODO - TESTAR
+        return res
+          .status(201)
+          .send(
+            { message: "Usuário seguido com sucesso", following: true },
+            resultFollow.rows,
+          )
+      }
+    } catch (error) {
+      verboseConsoleLog("Error:", error)
+      return res.status(500).send(error)
+    }
+  } else {
+    return res.status(400).send({ message: "Não é possível seguir você mesmo" })
   }
 }
