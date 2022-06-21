@@ -77,6 +77,7 @@ export async function createPost(req, res) {
       }
 
       try {
+        console.log("parada 1")
         const result = await postsRepository.createPost(
           userId,
           sharedUrl,
