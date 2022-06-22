@@ -1,9 +1,10 @@
 import { Router } from "express"
 
-import { sharePost } from "../controllers/shareController.js"
+import { getSharedPosts, sharePost } from "../controllers/shareController.js"
 import { tokenValidation } from "../middlewares/tokenValidation.js"
 
 const shareRouter = Router()
 shareRouter.post("/share/:id", tokenValidation, sharePost)
+shareRouter.get("/share/:id", tokenValidation, getSharedPosts)
 
 export default shareRouter

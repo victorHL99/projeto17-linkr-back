@@ -18,6 +18,7 @@ async function getPosts(
   , posts.message
   , posts.shared_url as "sharedUrl"
   , posts.created_at as "createdAt"
+  , posts.shared_post_id as "sharedPostId"
   , users.username
   , users.profile_image as "profileImage"
   , count(likes.post_id)::integer as "likesCount"
@@ -135,10 +136,13 @@ async function createRelationHashtagPost(postId, hashtagId) {
   return db.query(queryText)
 }
 
-async function updatePost(id ,message, userId) {
-  return db.query (`UPDATE posts
+async function updatePost(id, message, userId) {
+  return db.query(
+    `UPDATE posts
   SET  message =$2
-  WHERE id=$1 AND user_id=$3`, [id, message, userId],)
+  WHERE id=$1 AND user_id=$3`,
+    [id, message, userId],
+  )
 }
 
 const postsRepository = {
