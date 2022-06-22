@@ -5,6 +5,6 @@ import { tokenValidation } from "../middlewares/tokenValidation.js"
 
 const shareRouter = Router()
 shareRouter.post("/share/:id", tokenValidation, sharePost)
-shareRouter.get("/share/:id", tokenValidation, getSharedPosts)
+shareRouter.get("/share", getSharedPosts)
 
 export default shareRouter

@@ -1,40 +1,34 @@
 import db from "../config/db.js"
 
-async function getPostInfos(postId) {
+async function insertRepost(userId, postId) {
   return db.query(
-    `SELECT message, shared_url
-    FROM posts
-    WHERE id = $1
+    `INSERT INTO reposts
+    (user_id, post_id)
+    VALUES ($1, $2)
     `,
-    [postId],
+    [userId, postId],
   )
 }
 
-async function insertPostShared(userId, postId, message, sharedUrl) {
+async function getRepost() {
   return db.query(
-    `INSERT INTO posts
-    (user_id, message, shared_url, shared_post_id)
-    VALUES ($1, $2, $3, $4)
+    `SELECT 
+    p.user_id AS "postUserId", 
+    p.message, 
+    p.shared_url AS "sharedUrl", 
+    p.deleted, 
+    r.created_at AS "createdAt", 
+    r.user_id AS "repostUserId"
+    FROM reposts r
+    JOIN posts p ON p.id = r.post_id
+    ORDER BY "createdAt" DESC
     `,
-    [userId, message, sharedUrl, postId],
-  )
-}
-
-async function getUserPostInfos(sharedPostId) {
-  return db.query(
-    `SELECT u.username, u.profile_image AS "profileImage"
-    FROM posts p
-    JOIN users u ON u.id = p.user_id
-    WHERE p.id = $1
-    `,
-    [sharedPostId],
   )
 }
 
 const shareRepository = {
-  getPostInfos,
-  insertPostShared,
-  getUserPostInfos,
+  insertRepost,
+  getRepost,
 }
 
 export default shareRepository
