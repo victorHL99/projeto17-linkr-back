@@ -33,6 +33,7 @@ ${limitClause}`
 }
 
 async function createPost(userId, sharedUrl, message) {
+  console.log("CHEGUEI AQUI")
   return db.query(
     `INSERT INTO posts ("user_id", "shared_url", "message") 
           VALUES ($1,$2,$3);
