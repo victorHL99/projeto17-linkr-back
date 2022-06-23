@@ -7,12 +7,14 @@ async function getPosts(
   order = "created_at",
   direction = "DESC",
   userId,
+  offset
 ) {
   const limitClause = limit ? `LIMIT ${SqlString.escape(limit)}` : ""
   const orderClause = order ? `ORDER BY posts.${order} ${direction}` : ""
   const whereClause = userId ? `AND users.id = ${SqlString.escape(userId)}` : ""
-
-  const queryText = `SELECT 
+  const offsetClause = order ? `OFFSET ${SqlString.escape(offset)}` : "";
+  console.log("############## user id:", userId)
+  const queryTextWithoutLimit = `SELECT 
   posts.id
   , posts.user_id as "userId"
   , posts.message
@@ -21,19 +23,26 @@ async function getPosts(
   , users.username
   , users.profile_image as "profileImage"
   , count(likes.post_id)::integer as "likesCount"
+  , count(posts.id)::integer as "PostsCount"
   from posts
   LEFT JOIN likes on posts.id = likes.post_id
   JOIN users on users.id = posts.user_id
   WHERE posts.deleted IS NOT true ${whereClause}
   GROUP BY posts.id, users.id
-${orderClause}
-${limitClause}`
+`
 
-  return db.query(queryText)
+  const queryText = `${queryTextWithoutLimit} ${orderClause} ${limitClause} ${offsetClause}`
+  const result_rows = await db.query(queryText)
+  const result_count = await db.query(queryTextWithoutLimit)
+
+  return {rows: result_rows.rows, count: result_count.rowCount} 
+  
 }
 
+
+
 async function createPost(userId, sharedUrl, message) {
-  console.log("CHEGUEI AQUI")
+  
   return db.query(
     `INSERT INTO posts ("user_id", "shared_url", "message") 
           VALUES ($1,$2,$3);
@@ -137,6 +146,7 @@ async function createRelationHashtagPost(postId, hashtagId) {
 }
 
 async function updatePost(id ,message, userId) {
+  console.log("############## user id:", userId)
   return db.query (`UPDATE posts
   SET  message =$2
   WHERE id=$1 AND user_id=$3`, [id, message, userId],)

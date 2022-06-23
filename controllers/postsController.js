@@ -5,20 +5,23 @@ import postsRepository from "../repositories/postsRepository.js"
 import verboseConsoleLog from "../utils/verboseConsoleLog.js"
 
 export async function getPosts(req, res) {
-  const { limit, order, direction } = req.query
+  const { limit, order, direction, page } = req.query
   const { userId } = req.params
-
+  const offset = (page - 1) * limit
   try {
-    const result = await postsRepository.getPosts(
+    const {rows, count} = await postsRepository.getPosts(
       limit,
       order,
       direction,
       userId,
-    )
-
-    for (let i in result.rows) {
-      const post = result.rows[i]
-      try {
+      offset,
+      )
+    
+     
+      const total_pages = Math.ceil(count / limit) //total de paginas que podem ser renderizadas
+      for (let i in rows) {
+        const post = rows[i]
+        try {
         const metadata = await urlMetadata(post.sharedUrl)
 
         post.previewTitle = metadata.title
@@ -30,8 +33,8 @@ export async function getPosts(req, res) {
       }
     }
 
-    verboseConsoleLog("Result:", result.rows)
-    return res.send(result.rows)
+    verboseConsoleLog("Result:", rows.rows)
+    return res.send({rows:rows,total_pages:total_pages})
   } catch (error) {
     verboseConsoleLog("Error:", error)
     return res.sendStatus(500)
