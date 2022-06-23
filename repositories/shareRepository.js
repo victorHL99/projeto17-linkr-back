@@ -10,8 +10,22 @@ async function insertRepost(userId, postId) {
   )
 }
 
+async function deleteRepost(userId, postId) {
+  return db.query(
+    `DELETE FROM reposts
+    WHERE id IN (
+      SELECT id FROM reposts
+      WHERE user_id = $1 AND post_id = $2
+      LIMIT 1
+    )
+    `,
+    [userId, postId],
+  )
+}
+
 const shareRepository = {
   insertRepost,
+  deleteRepost,
 }
 
 export default shareRepository

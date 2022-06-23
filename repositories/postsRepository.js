@@ -10,7 +10,10 @@ async function getPosts(
 ) {
   const limitClause = limit ? `LIMIT ${SqlString.escape(limit)}` : ""
   const orderClause = order ? `ORDER BY posts.${order} ${direction}` : ""
-  const whereClause = userId ? `AND users.id = ${SqlString.escape(userId)}` : ""
+  const whereClause = userId ? `AND u.id = ${SqlString.escape(userId)}` : ""
+  const whereClauseRepost = userId
+    ? `AND u2.id = ${SqlString.escape(userId)}`
+    : ""
 
   const queryText = `
   SELECT
@@ -20,16 +23,20 @@ async function getPosts(
   u.profile_image as "profileImage",
   p.message, 
   p.shared_url AS "sharedUrl",
-  COUNT(l.post_id)::integer AS "likesCount",
-  COUNT(r2.post_id)::integer AS "repostsCount",
+  (SELECT
+      COUNT(l.post_id)::integer
+      FROM likes l
+      WHERE l.post_id = p.id) AS "likesCount",
+  (SELECT
+      COUNT(r2.post_id)::integer
+      FROM reposts r2
+      WHERE r2.post_id = p.id) AS "repostsCount",
   p.created_at AS "createdAt",
   r.id AS "repostUserId",
   u2.username AS "repostUsername"
   FROM posts p
-  LEFT JOIN reposts r ON r.id = NULL
-  LEFT JOIN reposts r2 ON r2.post_id = p.id
-  LEFT JOIN likes l ON p.id = l.post_id
   JOIN users u ON u.id = p.user_id
+  LEFT JOIN reposts r ON r.id = NULL
   LEFT JOIN users u2 ON u2.id = r.user_id
   WHERE p.deleted IS NOT true ${whereClause}
   GROUP BY p.id, u.id, r.id, u2.username
@@ -41,8 +48,14 @@ async function getPosts(
   u.profile_image as "profileImage",
   p.message, 
   p.shared_url AS "sharedUrl", 
-  COUNT(l.post_id)::integer AS "likesCount",
-  COUNT(r.post_id)::integer AS "repostsCount",
+  (SELECT
+      COUNT(l.post_id)::integer
+      FROM likes l
+      WHERE l.post_id = p.id) AS "likesCount",
+  (SELECT
+      COUNT(r2.post_id)::integer
+      FROM reposts r2
+      WHERE r2.post_id = p.id) AS "repostsCount",
   r.created_at AS "createdAt", 
   r.user_id AS "repostUserId",
   u2.username AS "repostUsername"
@@ -50,8 +63,7 @@ async function getPosts(
   JOIN posts p ON p.id = r.post_id
   JOIN users u ON u.id = p.user_id
   LEFT JOIN users u2 ON u2.id = r.user_id
-  LEFT JOIN likes l ON r.post_id = l.post_id
-  WHERE p.deleted IS NOT true ${whereClause}
+  WHERE p.deleted IS NOT true ${whereClauseRepost}
   GROUP BY p.id, u.id, r.post_id, r.created_at, r.user_id, u2.username
   ORDER BY "createdAt" DESC
   ${limitClause}
@@ -115,13 +127,13 @@ async function deletePostById(id) {
   )
 }
 
-async function deleteReposts(id) {
+/*async function deleteReposts(id) {
   return db.query(
     `DELETE FROM reposts
     WHERE post_id = $1`,
     [id],
   )
-}
+}*/
 
 async function getPostByUserId(userId, id) {
   return db.query(
@@ -187,7 +199,6 @@ const postsRepository = {
   getPostsByHash,
   deletePostById,
   getPostByUserId,
-  deleteReposts,
   getHashtagByName,
   createHashtags,
   getAllHashtags,
