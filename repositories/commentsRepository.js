@@ -13,6 +13,7 @@ export async function getComments(id) {
     JOIN users ON users.id=comments.user_id
     WHERE
     post_id = $1
+    order by comments.created_at 
     `, [parseInt(id)]);
 }
 
@@ -29,9 +30,9 @@ export async function countComments(id) {
 export async function listFollows(id) {
     return db.query(`
     SELECT 
-    follower_id as "followerId"
+    followed_id as "followedId"
     FROM follows 
     WHERE
-    followed_id=$1
+    follower_id=$1
     `, [parseInt(id)])
 }

@@ -35,7 +35,7 @@ export async function getFollows(req, res) {
         const {rows: follows} = await listFollows(userId)
 
         const list = follows.map(follow => {
-            return follow.followerId
+            return follow.followedId
         })
 
         res.send(list)
