@@ -1,4 +1,4 @@
-import { getComments, countComments } from "../repositories/commentsRepository.js"
+import { getComments, countComments, listFollows } from "../repositories/commentsRepository.js"
 
 import verboseConsoleLog from "./../utils/verboseConsoleLog.js"
 
@@ -22,6 +22,23 @@ export async function commentsCounter(req, res) {
         const counter = await countComments(postId)
         const comments = counter.rowCount.toString()
         return res.status(200).send(comments)
+    } catch (error) {
+        verboseConsoleLog("Error:", error)
+        return res.sendStatus(500)
+    }
+}
+
+export async function getFollows(req, res) {
+    const { userId } = req.params
+
+    try {
+        const {rows: follows} = await listFollows(userId)
+
+        const list = follows.map(follow => {
+            return follow.followerId
+        })
+
+        res.send(list)
     } catch (error) {
         verboseConsoleLog("Error:", error)
         return res.sendStatus(500)

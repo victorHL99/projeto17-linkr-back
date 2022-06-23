@@ -25,3 +25,13 @@ export async function countComments(id) {
     post_id = $1
     `, [parseInt(id)]);
 }
+
+export async function listFollows(id) {
+    return db.query(`
+    SELECT 
+    follower_id as "followerId"
+    FROM follows 
+    WHERE
+    followed_id=$1
+    `, [parseInt(id)])
+}
