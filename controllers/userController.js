@@ -64,6 +64,26 @@ export async function followUser(req, res) {
   }
 }
 
+export async function unfollowUser(req, res) {
+  const { userId } = res.locals
+  const { followedId } = req.params
+
+  if (userId !== followedId) {
+    try {
+      const resultUnfollow = await followRepository.unfollowUser(
+        userId,
+        followedId,
+      ) // QUERY PARA DELETAR O SEGUIDOR // TODO - TESTAR
+      return res
+        .status(200)
+        .send({ message: "Usuário desseguido com sucesso", following: false })
+    } catch (error) {
+      verboseConsoleLog("Error:", error)
+      return res.status(500).send(error)
+    }
+  }
+}
+
 export async function getFollowCount(req, res) {
   const { userId } = res.locals
   try {

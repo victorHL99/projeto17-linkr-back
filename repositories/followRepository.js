@@ -20,9 +20,19 @@ function followUser(userId, followedId) {
   )
 }
 
+function unfollowUser(userId, followedId) {
+  return db.query(
+    `
+    DELETE FROM follows WHERE follower_id = $1 AND followed_id = $2
+    `,
+    [userId, followedId],
+  )
+}
+
 export const followRepository = {
   verifyFollowUser,
   followUser,
+  unfollowUser,
 }
 
 export default followRepository

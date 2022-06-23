@@ -5,6 +5,7 @@ import {
   getUserByUsername,
   followUser,
   getFollowCount,
+  unfollowUser,
 } from "../controllers/userController.js"
 import { tokenValidation } from "../middlewares/tokenValidation.js"
 import { validateSchema } from "../middlewares/schemaValidator.js"
@@ -21,5 +22,6 @@ userRouter.post(
   validateSchema(followSchema),
   followUser,
 )
+userRouter.delete("/user/:followedId", tokenValidation, unfollowUser)
 
 export default userRouter
