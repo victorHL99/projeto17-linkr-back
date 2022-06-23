@@ -20,10 +20,8 @@ export async function countComments(id) {
     return db.query(`
     SELECT 
     comments.post_id as "postId"
-    , count(message) as "commentsCount"
     FROM comments
     WHERE
     post_id = $1
-    GROUP BY post_id
     `, [parseInt(id)]);
 }

@@ -20,8 +20,8 @@ export async function commentsCounter(req, res) {
 
     try {
         const counter = await countComments(postId)
-
-        res.send(counter.rows[0])
+        const comments = counter.rowCount.toString()
+        return res.status(200).send(comments)
     } catch (error) {
         verboseConsoleLog("Error:", error)
         return res.sendStatus(500)
