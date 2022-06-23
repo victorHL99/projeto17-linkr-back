@@ -1,6 +1,6 @@
 import db from "../config/db.js"
 
-export async function getComments(id) {
+ async function getComments(id) {
     return db.query(`
     SELECT 
     comments.id
@@ -16,7 +16,7 @@ export async function getComments(id) {
     `, [parseInt(id)]);
 }
 
-export async function countComments(id) {
+ async function countComments(id) {
     return db.query(`
     SELECT 
     comments.post_id as "postId"
@@ -27,3 +27,18 @@ export async function countComments(id) {
     GROUP BY post_id
     `, [parseInt(id)]);
 }
+
+
+ async function updateComment(id ,message, userId) {
+    return db.query (`UPDATE comments
+    SET  message =$2
+    WHERE id=$1 AND user_id=$3`, [id, message, userId],)
+  }
+  
+  const commentsRepository = {
+    updateComment,
+    getComments,
+    countComments,
+  }
+  
+  export default commentsRepository;
