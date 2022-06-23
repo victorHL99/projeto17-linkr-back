@@ -10,7 +10,11 @@ async function getPosts(
 ) {
   const limitClause = limit ? `LIMIT ${SqlString.escape(limit)}` : ""
   const orderClause = order ? `ORDER BY posts.${order} ${direction}` : ""
-  const whereClause = userId ? `AND users.id = ${SqlString.escape(userId)}` : ""
+  const joinFollowClause = userId
+    ? `JOIN follows on posts.user_id = follows.followed_id AND follows.follower_id = ${SqlString.escape(
+        userId,
+      )}`
+    : ""
 
   const queryText = `SELECT 
   posts.id
@@ -24,10 +28,48 @@ async function getPosts(
   from posts
   LEFT JOIN likes on posts.id = likes.post_id
   JOIN users on users.id = posts.user_id
+  ${joinFollowClause}
+  WHERE posts.deleted IS NOT true
+  GROUP BY posts.id, users.id
+${orderClause}
+${limitClause}`
+
+  return db.query(queryText)
+}
+
+async function getPostsFromUserById(
+  limit,
+  order = "created_at",
+  direction = "DESC",
+  userId,
+  myId,
+) {
+  const limitClause = limit ? `LIMIT ${SqlString.escape(limit)}` : ""
+  const orderClause = order ? `ORDER BY posts.${order} ${direction}` : ""
+  const whereClause = userId ? `AND users.id = ${SqlString.escape(userId)}` : ""
+  const joinFollowClause = myId
+    ? `JOIN follows on posts.user_id = follows.followed_id AND follows.follower_id = 1`
+    : ""
+
+  const queryText = `SELECT 
+  posts.id
+  , posts.user_id as "userId"
+  , posts.message
+  , posts.shared_url as "sharedUrl"
+  , posts.created_at as "createdAt"
+  , users.username
+  , users.profile_image as "profileImage"
+  , count(likes.post_id)::integer as "likesCount"
+  from posts
+  LEFT JOIN likes on posts.id = likes.post_id
+  JOIN users on users.id = posts.user_id
+  ${joinFollowClause}
   WHERE posts.deleted IS NOT true ${whereClause}
   GROUP BY posts.id, users.id
 ${orderClause}
 ${limitClause}`
+
+  console.log(queryText)
 
   return db.query(queryText)
 }
@@ -146,6 +188,7 @@ async function updatePost(id, message, userId) {
 
 const postsRepository = {
   getPosts,
+  getPostsFromUserById,
   createPost,
   getLastPost,
   getPostsByHash,
