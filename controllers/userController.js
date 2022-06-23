@@ -63,3 +63,16 @@ export async function followUser(req, res) {
     return res.status(400).send({ message: "Não é possível seguir você mesmo" })
   }
 }
+
+export async function getFollowCount(req, res) {
+  const { userId } = res.locals
+  try {
+    const followCount = await userRepository.getFollowCount(userId)
+
+    if (!followCount.rowCount) return res.sendStatus(204)
+    else return res.send(followCount.rows[0].followCount)
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+    return res.sendStatus(500)
+  }
+}
