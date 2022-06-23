@@ -10,12 +10,3 @@ export async function sharePost(req, res) {
     res.status(500).send(e.message)
   }
 }
-
-export async function getSharedPosts(req, res) {
-  try {
-    const { rows: reposts } = await shareRepository.getRepost()
-    res.send(reposts)
-  } catch (e) {
-    res.status(500).send(e.message)
-  }
-}

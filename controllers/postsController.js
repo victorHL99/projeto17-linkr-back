@@ -139,19 +139,19 @@ export async function deletePost(req, res) {
   const { id } = req.params
   try {
     await postsRepository.deletePostById(id)
+    await postsRepository.deleteReposts(id)
     res.sendStatus(204)
   } catch (e) {
     return res.status(500).send(e.message)
   }
 }
 
-
 export async function updatePost(req, res) {
   const { id } = req.params
   const { userId } = res.locals
-  const { message } = req.body 
+  const { message } = req.body
   try {
-    await postsRepository.updatePost(id ,message, userId)
+    await postsRepository.updatePost(id, message, userId)
     res.sendStatus(204)
   } catch (e) {
     return res.status(500).send(e.message)

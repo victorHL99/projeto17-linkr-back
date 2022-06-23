@@ -23,14 +23,16 @@ async function getPosts(
   COUNT(l.post_id)::integer AS "likesCount",
   COUNT(r2.post_id)::integer AS "repostsCount",
   p.created_at AS "createdAt",
-  r.id AS "repostUserId"
+  r.id AS "repostUserId",
+  u2.username AS "repostUsername"
   FROM posts p
   LEFT JOIN reposts r ON r.id = NULL
   LEFT JOIN reposts r2 ON r2.post_id = p.id
   LEFT JOIN likes l ON p.id = l.post_id
   JOIN users u ON u.id = p.user_id
+  LEFT JOIN users u2 ON u2.id = r.user_id
   WHERE p.deleted IS NOT true ${whereClause}
-  GROUP BY p.id, u.id, r.id
+  GROUP BY p.id, u.id, r.id, u2.username
   UNION ALL
   SELECT
   r.post_id AS id,
@@ -42,13 +44,15 @@ async function getPosts(
   COUNT(l.post_id)::integer AS "likesCount",
   COUNT(r.post_id)::integer AS "repostsCount",
   r.created_at AS "createdAt", 
-  r.user_id AS "repostUserId"
+  r.user_id AS "repostUserId",
+  u2.username AS "repostUsername"
   FROM reposts r
   JOIN posts p ON p.id = r.post_id
   JOIN users u ON u.id = p.user_id
+  LEFT JOIN users u2 ON u2.id = r.user_id
   LEFT JOIN likes l ON r.post_id = l.post_id
   WHERE p.deleted IS NOT true ${whereClause}
-  GROUP BY p.id, u.id, r.post_id, r.created_at, r.user_id
+  GROUP BY p.id, u.id, r.post_id, r.created_at, r.user_id, u2.username
   ORDER BY "createdAt" DESC
   ${limitClause}
   `
@@ -107,6 +111,14 @@ async function deletePostById(id) {
   return db.query(
     `UPDATE posts SET deleted=true
     WHERE id = $1`,
+    [id],
+  )
+}
+
+async function deleteReposts(id) {
+  return db.query(
+    `DELETE FROM reposts
+    WHERE post_id = $1`,
     [id],
   )
 }
@@ -175,6 +187,7 @@ const postsRepository = {
   getPostsByHash,
   deletePostById,
   getPostByUserId,
+  deleteReposts,
   getHashtagByName,
   createHashtags,
   getAllHashtags,
