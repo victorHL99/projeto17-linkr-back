@@ -33,7 +33,6 @@ ${limitClause}`
 }
 
 async function createPost(userId, sharedUrl, message) {
-  console.log("CHEGUEI AQUI")
   return db.query(
     `INSERT INTO posts ("user_id", "shared_url", "message") 
           VALUES ($1,$2,$3);
@@ -136,10 +135,13 @@ async function createRelationHashtagPost(postId, hashtagId) {
   return db.query(queryText)
 }
 
-async function updatePost(id ,message, userId) {
-  return db.query (`UPDATE posts
+async function updatePost(id, message, userId) {
+  return db.query(
+    `UPDATE posts
   SET  message =$2
-  WHERE id=$1 AND user_id=$3`, [id, message, userId],)
+  WHERE id=$1 AND user_id=$3`,
+    [id, message, userId],
+  )
 }
 
 const postsRepository = {

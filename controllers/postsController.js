@@ -26,7 +26,7 @@ export async function getPosts(req, res) {
         post.previewDescription = metadata.description
         post.previewUrl = metadata.url
       } catch (error) {
-        console.log(error)
+        verboseConsoleLog("Error:", error)
       }
     }
 
@@ -77,7 +77,6 @@ export async function createPost(req, res) {
       }
 
       try {
-       
         const result = await postsRepository.createPost(
           userId,
           sharedUrl,
@@ -146,13 +145,12 @@ export async function deletePost(req, res) {
   }
 }
 
-
 export async function updatePost(req, res) {
   const { id } = req.params
   const { userId } = res.locals
-  const { message } = req.body 
+  const { message } = req.body
   try {
-    await postsRepository.updatePost(id ,message, userId)
+    await postsRepository.updatePost(id, message, userId)
     res.sendStatus(204)
   } catch (e) {
     return res.status(500).send(e.message)
