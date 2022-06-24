@@ -5,13 +5,6 @@ import db from "./../config/db.js"
 async function getLikedByWho(postId, limit = 5, userId) {
   const limitClause = limit ? `LIMIT ${SqlString.escape(limit)}` : ""
 
-  // const queryText = `SELECT array_remove(${limitArray},NULL) as "likedBy"
-  // FROM likes
-  // RIGHT JOIN posts ON posts.id = likes.post_id
-  // LEFT JOIN users ON users.id = likes.user_id
-  // WHERE posts.id = $1
-  // GROUP BY posts.id`
-
   const queryText = `--sql
   SELECT users.username as "likedBy"
   FROM likes
