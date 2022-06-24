@@ -23,16 +23,19 @@ async function getUserById(userId) {
   )
 }
 
-async function getUserByUsername(username) {
+async function getUserByUsername(username, userId) {
   return db.query(
     `
-    SELECT username,
-    id AS "userId",
-    profile_image AS "profileImage"
-    from users 
-    WHERE username 
-    ILIKE $1`,
-    [`%${username}%`],
+    SELECT u.id, u.username,
+    u."profile_image", 
+    f."follower_id" AS "followed"  
+    FROM users u
+    LEFT JOIN follows f 
+    ON f."followed_id" = u.id 
+    AND f."follower_id" = $2
+    WHERE username ILIKE $1
+    ORDER BY "followed_id"`,
+    [`%${username}%`, userId],
   )
 }
 

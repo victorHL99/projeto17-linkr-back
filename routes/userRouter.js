@@ -13,7 +13,7 @@ import { validateSchema } from "../middlewares/schemaValidator.js"
 
 const userRouter = Router()
 
-userRouter.get("/user", getUserByUsername)
+userRouter.get("/user", tokenValidation, getUserByUsername)
 userRouter.get("/user/:userId", getUser)
 userRouter.get("/follows", tokenValidation, getFollowCount)
 userRouter.get("/follows/:followedId", tokenValidation, getFollowState)
