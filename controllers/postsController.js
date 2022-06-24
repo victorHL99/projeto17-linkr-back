@@ -207,7 +207,7 @@ export async function updatePost(req, res) {
   const { message } = req.body
   try {
     await postsRepository.updatePost(id, message, userId)
-    res.sendStatus(204)
+    res.sendStatus(201)
   } catch (error) {
     verboseConsoleLog("Error:", error)
     return res.status(500).send(error.message)
