@@ -10,7 +10,6 @@ import {
 } from "../controllers/userController.js"
 import { tokenValidation } from "../middlewares/tokenValidation.js"
 import { validateSchema } from "../middlewares/schemaValidator.js"
-import followSchema from "../schemas/followSchema.js"
 
 const userRouter = Router()
 

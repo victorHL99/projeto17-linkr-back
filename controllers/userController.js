@@ -27,8 +27,8 @@ export async function getUserByUsername(req, res) {
 }
 
 export async function followUser(req, res) {
-  const { followedId } = req.params // seguido
-  const { followerId } = req.body // seguidor
+  const { followedId } = req.params
+  const { followerId } = req.body
 
   if (followedId !== followerId) {
     try {
@@ -55,8 +55,8 @@ export async function followUser(req, res) {
 }
 
 export async function unfollowUser(req, res) {
-  const { followedId } = req.params // seguido
-  const { userId } = res.locals // seguidor
+  const { followedId } = req.params
+  const { userId } = res.locals
 
   if (followedId !== userId) {
     try {
