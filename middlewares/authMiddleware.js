@@ -11,8 +11,9 @@ export async function signupMiddleware(req, res, next) {
       return res.status(422).send("Email/Username already exists!")
     }
     next()
-  } catch (e) {
-    return res.status(500).send(e.message)
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+    return res.status(500).send(error.message)
   }
 }
 
@@ -30,7 +31,8 @@ export async function signinMiddleware(req, res, next) {
     delete user.password
     res.locals.user = user
     next()
-  } catch (e) {
-    return res.status(500).send(e.message)
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+    return res.status(500).send(error.message)
   }
 }

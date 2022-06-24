@@ -9,7 +9,8 @@ export async function getTrendings(req, res) {
     )
 
     res.send(trendings)
-  } catch (err) {
-    return res.status(500).send(err.message)
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+    return res.status(500).send(error.message)
   }
 }

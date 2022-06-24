@@ -10,7 +10,8 @@ export async function userPostMiddleware(req, res, next) {
       return res.status(401).send("Post belongs to another user!")
     }
     next()
-  } catch (e) {
-    return res.status(500).send(e.message)
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+    return res.status(500).send(error.message)
   }
 }

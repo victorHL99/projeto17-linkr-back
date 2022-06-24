@@ -16,8 +16,9 @@ export async function postUser(req, res) {
       profileImage,
     )
     res.sendStatus(201)
-  } catch (e) {
-    return res.status(500).send(e.message)
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+    return res.status(500).send(error.message)
   }
 }
 
@@ -28,8 +29,9 @@ export async function postSignin(req, res) {
   try {
     await authRepository.insertSession(user.id, token)
     res.send({ ...user, token })
-  } catch (e) {
-    return res.status(500).send(e.message)
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+    return res.status(500).send(error.message)
   }
 }
 
@@ -37,6 +39,7 @@ export async function postAutoLogin(req, res) {
   try {
     res.sendStatus(200)
   } catch {
+    verboseConsoleLog("Error:", error)
     res.sendStatus(500)
   }
 }
@@ -47,6 +50,7 @@ export async function deleteSession(req, res) {
     await authRepository.deleteSessionByToken(token)
     res.sendStatus(200)
   } catch {
+    verboseConsoleLog("Error:", error)
     res.sendStatus(500)
   }
 }

@@ -6,8 +6,8 @@ export async function sharePost(req, res) {
     const { id: postId } = req.params
     await shareRepository.insertRepost(userId, postId)
     res.sendStatus(201)
-  } catch (e) {
-    res.status(500).send(e.message)
+  } catch (error) {
+    res.status(500).send(error.message)
   }
 }
 
@@ -17,7 +17,8 @@ export async function deleteRepost(req, res) {
     const { id: postId } = req.params
     await shareRepository.deleteRepost(userId, postId)
     res.sendStatus(204)
-  } catch (e) {
-    res.status(500).send(e.message)
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+    res.status(500).send(error.message)
   }
 }
