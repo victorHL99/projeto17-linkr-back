@@ -17,7 +17,7 @@ userRouter.get("/user", getUserByUsername)
 userRouter.get("/user/:userId", getUser)
 userRouter.get("/follows", tokenValidation, getFollowCount)
 userRouter.get("/follows/:followedId", tokenValidation, getFollowState)
-userRouter.post("/user/:followedId", tokenValidation, followUser)
-userRouter.delete("/user/:followedId", tokenValidation, unfollowUser)
+userRouter.post("/follows/:followedId", tokenValidation, followUser)
+userRouter.delete("/follows/:followedId", tokenValidation, unfollowUser)
 
 export default userRouter
