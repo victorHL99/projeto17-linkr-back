@@ -32,11 +32,6 @@ postsRouter.delete(
   userPostMiddleware,
   deletePost,
 )
-postsRouter.put(
-  "/posts/:id",
-  tokenValidation,
-  /* validateSchema(newPostSchema), */
-  updatePost,
-)
+postsRouter.put("/posts/:id", tokenValidation, updatePost)
 
 export default postsRouter
