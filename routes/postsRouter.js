@@ -2,6 +2,7 @@ import { Router } from "express"
 
 import {
   getPosts,
+  getPostsFromUserById,
   createPost,
   deletePost,
   getPostsByHashtag,
@@ -12,14 +13,13 @@ import { userPostMiddleware } from "../middlewares/postsMiddleware.js"
 
 import { validateSchema } from "../middlewares/schemaValidator.js"
 import { tokenValidation } from "../middlewares/tokenValidation.js"
-import  newPostSchema   from "../schemas/newPostSchema.js"
-import updatePostSchema from "../schemas/updatePostSchema.js"
+import newPostSchema from "../schemas/newPostSchema.js"
 
 const postsRouter = Router()
 
-postsRouter.get("/posts", getPosts)
+postsRouter.get("/posts", tokenValidation, getPosts)
+postsRouter.get("/posts/:userId", tokenValidation, getPostsFromUserById)
 postsRouter.get("/hashtag/:hashtag", getPostsByHashtag)
-postsRouter.get("/posts/:userId", getPosts)
 postsRouter.post(
   "/posts",
   validateSchema(newPostSchema),
@@ -35,7 +35,7 @@ postsRouter.delete(
 postsRouter.put(
   "/posts/:id",
   tokenValidation,
-  validateSchema(updatePostSchema),
+  validateSchema(newPostSchema),
   updatePost,
 )
 

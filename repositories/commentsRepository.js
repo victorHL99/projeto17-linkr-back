@@ -13,6 +13,7 @@ import db from "../config/db.js"
     JOIN users ON users.id=comments.user_id
     WHERE
     post_id = $1
+    order by comments.created_at 
     `, [parseInt(id)]);
 }
 
@@ -20,11 +21,9 @@ import db from "../config/db.js"
     return db.query(`
     SELECT 
     comments.post_id as "postId"
-    , count(message) as "commentsCount"
     FROM comments
     WHERE
     post_id = $1
-    GROUP BY post_id
     `, [parseInt(id)]);
 }
 
@@ -42,3 +41,13 @@ import db from "../config/db.js"
   }
   
   export default commentsRepository;
+
+export async function listFollows(id) {
+    return db.query(`
+    SELECT 
+    followed_id as "followedId"
+    FROM follows 
+    WHERE
+    follower_id=$1
+    `, [parseInt(id)])
+}

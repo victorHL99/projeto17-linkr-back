@@ -7,42 +7,148 @@ async function getPosts(
   order = "created_at",
   direction = "DESC",
   userId,
-  offset
 ) {
   const limitClause = limit ? `LIMIT ${SqlString.escape(limit)}` : ""
-  const orderClause = order ? `ORDER BY posts.${order} ${direction}` : ""
-  const whereClause = userId ? `AND users.id = ${SqlString.escape(userId)}` : ""
-  const offsetClause = order ? `OFFSET ${SqlString.escape(offset)}` : "";
-  console.log("############## user id:", userId)
-  const queryTextWithoutLimit = `SELECT 
-  posts.id
-  , posts.user_id as "userId"
-  , posts.message
-  , posts.shared_url as "sharedUrl"
-  , posts.created_at as "createdAt"
-  , users.username
-  , users.profile_image as "profileImage"
-  , count(likes.post_id)::integer as "likesCount"
-  , count(posts.id)::integer as "PostsCount"
-  from posts
-  LEFT JOIN likes on posts.id = likes.post_id
-  JOIN users on users.id = posts.user_id
-  WHERE posts.deleted IS NOT true ${whereClause}
-  GROUP BY posts.id, users.id
-`
+  const orderClause =
+    order && direction ? `ORDER BY posts.${order} ${direction}` : ""
+  const joinFollowClause = userId
+    ? `JOIN follows on p.user_id = follows.followed_id AND follows.follower_id = ${SqlString.escape(
+        userId,
+      )}`
+    : ""
 
-  const queryText = `${queryTextWithoutLimit} ${orderClause} ${limitClause} ${offsetClause}`
-  const result_rows = await db.query(queryText)
-  const result_count = await db.query(queryTextWithoutLimit)
+  const joinFollowClauseRepost = userId
+    ? `JOIN follows on follows.follower_id = ${SqlString.escape(userId)}`
+    : ""
 
-  return {rows: result_rows.rows, count: result_count.rowCount} 
-  
+  const queryText = `SELECT
+  p.id,
+  p.user_id AS "userId",
+  u.username,
+  u.profile_image as "profileImage",
+  p.message, 
+  p.shared_url AS "sharedUrl",
+  (SELECT
+      COUNT(l.post_id)::integer
+      FROM likes l
+      WHERE l.post_id = p.id) AS "likesCount",
+  (SELECT
+      COUNT(r2.post_id)::integer
+      FROM reposts r2
+      WHERE r2.post_id = p.id) AS "repostsCount",
+  p.created_at AS "createdAt",
+  r.id AS "repostUserId",
+  u2.username AS "repostUsername"
+  FROM posts p
+  JOIN users u ON u.id = p.user_id
+  LEFT JOIN reposts r ON r.id = NULL
+  LEFT JOIN users u2 ON u2.id = r.user_id
+  ${joinFollowClause}
+  WHERE p.deleted IS NOT true
+  GROUP BY p.id, u.id, r.id, u2.username
+  UNION ALL
+  SELECT
+  r.post_id AS id,
+  p.user_id AS "userId",
+  u.username,
+  u.profile_image as "profileImage",
+  p.message, 
+  p.shared_url AS "sharedUrl", 
+  (SELECT
+      COUNT(l.post_id)::integer
+      FROM likes l
+      WHERE l.post_id = p.id) AS "likesCount",
+  (SELECT
+      COUNT(r2.post_id)::integer
+      FROM reposts r2
+      WHERE r2.post_id = p.id) AS "repostsCount",
+  r.created_at AS "createdAt", 
+  r.user_id AS "repostUserId",
+  u2.username AS "repostUsername"
+  FROM reposts r
+  JOIN posts p ON p.id = r.post_id
+  JOIN users u ON u.id = p.user_id
+  LEFT JOIN users u2 ON u2.id = r.user_id
+  ${joinFollowClauseRepost}
+  WHERE p.deleted IS NOT true AND p.user_id != 1
+  GROUP BY p.id, u.id, r.post_id, r.created_at, r.user_id, u2.username
+  ORDER BY "createdAt" DESC
+  ${limitClause}
+  `
+
+  return db.query(queryText)
 }
 
+async function getPostsFromUserById(
+  limit,
+  order = "created_at",
+  direction = "DESC",
+  userId,
+) {
+  const limitClause = limit ? `LIMIT ${SqlString.escape(limit)}` : ""
+  const orderClause =
+    order && direction ? `ORDER BY posts.${order} ${direction}` : ""
+  const whereClause = userId ? `AND u.id = ${SqlString.escape(userId)}` : ""
+  const whereClauseRepost = userId
+    ? `AND u2.id = ${SqlString.escape(userId)}`
+    : ""
 
+  const queryText = `SELECT
+  p.id,
+  p.user_id AS "userId",
+  u.username,
+  u.profile_image as "profileImage",
+  p.message, 
+  p.shared_url AS "sharedUrl",
+  (SELECT
+      COUNT(l.post_id)::integer
+      FROM likes l
+      WHERE l.post_id = p.id) AS "likesCount",
+  (SELECT
+      COUNT(r2.post_id)::integer
+      FROM reposts r2
+      WHERE r2.post_id = p.id) AS "repostsCount",
+  p.created_at AS "createdAt",
+  r.id AS "repostUserId",
+  u2.username AS "repostUsername"
+  FROM posts p
+  JOIN users u ON u.id = p.user_id
+  LEFT JOIN reposts r ON r.id = NULL
+  LEFT JOIN users u2 ON u2.id = r.user_id
+  WHERE p.deleted IS NOT true ${whereClause}
+  GROUP BY p.id, u.id, r.id, u2.username
+  UNION ALL
+  SELECT
+  r.post_id AS id,
+  p.user_id AS "userId",
+  u.username,
+  u.profile_image as "profileImage",
+  p.message, 
+  p.shared_url AS "sharedUrl", 
+  (SELECT
+      COUNT(l.post_id)::integer
+      FROM likes l
+      WHERE l.post_id = p.id) AS "likesCount",
+  (SELECT
+      COUNT(r2.post_id)::integer
+      FROM reposts r2
+      WHERE r2.post_id = p.id) AS "repostsCount",
+  r.created_at AS "createdAt", 
+  r.user_id AS "repostUserId",
+  u2.username AS "repostUsername"
+  FROM reposts r
+  JOIN posts p ON p.id = r.post_id
+  JOIN users u ON u.id = p.user_id
+  LEFT JOIN users u2 ON u2.id = r.user_id
+  WHERE p.deleted IS NOT true ${whereClauseRepost}
+  GROUP BY p.id, u.id, r.post_id, r.created_at, r.user_id, u2.username
+  ORDER BY "createdAt" DESC
+  ${limitClause}`
+
+  return db.query(queryText)
+}
 
 async function createPost(userId, sharedUrl, message) {
-  
   return db.query(
     `INSERT INTO posts ("user_id", "shared_url", "message") 
           VALUES ($1,$2,$3);
@@ -97,6 +203,14 @@ async function deletePostById(id) {
   )
 }
 
+/*async function deleteReposts(id) {
+  return db.query(
+    `DELETE FROM reposts
+    WHERE post_id = $1`,
+    [id],
+  )
+}*/
+
 async function getPostByUserId(userId, id) {
   return db.query(
     `SELECT id FROM posts 
@@ -145,15 +259,18 @@ async function createRelationHashtagPost(postId, hashtagId) {
   return db.query(queryText)
 }
 
-async function updatePost(id ,message, userId) {
-  console.log("############## user id:", userId)
-  return db.query (`UPDATE posts
+async function updatePost(id, message, userId) {
+  return db.query(
+    `UPDATE posts
   SET  message =$2
-  WHERE id=$1 AND user_id=$3`, [id, message, userId],)
+  WHERE id=$1 AND user_id=$3`,
+    [id, message, userId],
+  )
 }
 
 const postsRepository = {
   getPosts,
+  getPostsFromUserById,
   createPost,
   getLastPost,
   getPostsByHash,

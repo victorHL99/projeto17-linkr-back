@@ -80,7 +80,8 @@ CREATE TABLE IF NOT EXISTS public.follows
     id serial NOT NULL,
     followed_id integer NOT NULL,
     follower_id integer NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    UNIQUE (followed_id, follower_id)
 );
 
 CREATE TABLE IF NOT EXISTS public.reposts
