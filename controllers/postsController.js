@@ -1,18 +1,24 @@
 import urlMetadata from "url-metadata"
+import dayjs from "dayjs"
 
 import postsRepository from "../repositories/postsRepository.js"
 
 import verboseConsoleLog from "../utils/verboseConsoleLog.js"
 
 export async function getPosts(req, res) {
-  const { limit, order, direction } = req.query
+  const { limit, order, direction, from_time } = req.query
   const { userId } = res.locals
+
+  const parsedTime = from_time
+    ? dayjs(from_time).add(1, "second").format()
+    : undefined
 
   try {
     const {rows, count} = await postsRepository.getPosts(
       limit,
       order,
       direction,
+      parsedTime,
       userId,
       offset,
       )
@@ -33,7 +39,6 @@ export async function getPosts(req, res) {
       }
     }
 
-    // verboseConsoleLog("Result:", result.rows)
     return res.send(result.rows)
   } catch (error) {
     verboseConsoleLog("Error:", error)
