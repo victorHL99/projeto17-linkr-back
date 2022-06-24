@@ -20,67 +20,57 @@ export async function getUserByUsername(req, res) {
 
   try {
     const resultUsers = await userRepository.getUserByUsername(username)
-    verboseConsoleLog("Result:", resultUsers.rows)
     return res.status(200).send(resultUsers.rows)
   } catch (error) {
-    verboseConsoleLog("Error:", error)
     return res.status(500).send(error)
   }
 }
 
-//TODO - implementar messagens em ingles
 export async function followUser(req, res) {
-  const { userId } = res.locals
-  const { followedId } = req.params
+  const { followedId } = req.params // seguido
+  const { followerId } = req.body // seguidor
 
-  if (userId !== followedId) {
+  if (followedId !== followerId) {
     try {
-      const resultVerifyFollow = await followRepository.verifyFollowUser(
-        userId,
+      const resultByVerifyFollow = await followRepository.verifyFollowUser(
+        followerId,
         followedId,
-      ) // resultado da query se existe ou não // TODO - TESTAR
-      if (resultVerifyFollow.rows > 0) {
-        return res
-          .status(400)
-          .send({ message: "Usuário já seguido" }, resultFollow.rows)
-      } else {
+      )
+      if (resultByVerifyFollow.rows.length === 0) {
         const resultFollow = await followRepository.followUser(
-          userId,
+          followerId,
           followedId,
-        ) // QUERY PARA INSERIR NO BANCO NOVO SEGUIDOR // TODO - TESTAR
-        return res
-          .status(201)
-          .send(
-            { message: "Usuário seguido com sucesso", following: true },
-            resultFollow.rows,
-          )
+        )
+        return res.status(200).send(resultFollow.rows)
+      } else {
+        return res.status(400).send("You already follow this user")
       }
     } catch (error) {
-      verboseConsoleLog("Error:", error)
-      return res.status(500).send(error)
+      console.log(error)
+      res.sendStatus(500)
     }
   } else {
-    return res.status(400).send({ message: "Não é possível seguir você mesmo" })
+    return res.status(400).send("You can't follow yourself")
   }
 }
 
 export async function unfollowUser(req, res) {
-  const { userId } = res.locals
-  const { followedId } = req.params
+  const { followedId } = req.params // seguido
+  const { userId } = res.locals // seguidor
 
-  if (userId !== followedId) {
+  if (followedId !== userId) {
     try {
       const resultUnfollow = await followRepository.unfollowUser(
         userId,
         followedId,
-      ) // QUERY PARA DELETAR O SEGUIDOR // TODO - TESTAR
-      return res
-        .status(200)
-        .send({ message: "Usuário desseguido com sucesso", following: false })
+      )
+      return res.status(200).send(resultUnfollow.rows)
     } catch (error) {
-      verboseConsoleLog("Error:", error)
-      return res.status(500).send(error)
+      console.log(error)
+      res.sendStatus(500)
     }
+  } else {
+    return res.status(400).send("You can't unfollow yourself")
   }
 }
 

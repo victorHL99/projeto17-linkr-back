@@ -69,8 +69,6 @@ async function getPostsFromUserById(
 ${orderClause}
 ${limitClause}`
 
-  console.log(queryText)
-
   return db.query(queryText)
 }
 

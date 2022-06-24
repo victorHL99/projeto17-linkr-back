@@ -1,31 +1,31 @@
 import db from "../config/db.js"
 
-function verifyFollowUser(userId, followedId) {
+function verifyFollowUser(followerId, followedId) {
   return db.query(
     `
     SELECT * FROM follows
     WHERE follower_id = $1 AND followed_id = $2
     `,
-    [userId, followedId],
+    [followerId, followedId],
   )
 }
 
-function followUser(userId, followedId) {
+function followUser(followerId, followedId) {
   return db.query(
     `
     INSERT INTO follows ("follower_id", "followed_id")
     VALUES ($1, $2)
     `,
-    [userId, followedId],
+    [followerId, followedId],
   )
 }
 
-function unfollowUser(userId, followedId) {
+function unfollowUser(followerId, followedId) {
   return db.query(
     `
     DELETE FROM follows WHERE follower_id = $1 AND followed_id = $2
     `,
-    [userId, followedId],
+    [followerId, followedId],
   )
 }
 

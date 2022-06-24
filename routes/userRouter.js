@@ -16,12 +16,7 @@ const userRouter = Router()
 userRouter.get("/user", getUserByUsername)
 userRouter.get("/user/:userId", getUser)
 userRouter.get("/follows", tokenValidation, getFollowCount)
-userRouter.post(
-  "/user/:followedId",
-  tokenValidation,
-  validateSchema(followSchema),
-  followUser,
-)
+userRouter.post("/user/:followedId", tokenValidation, followUser)
 userRouter.delete("/user/:followedId", tokenValidation, unfollowUser)
 
 export default userRouter
