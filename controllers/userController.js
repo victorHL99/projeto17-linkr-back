@@ -74,6 +74,25 @@ export async function unfollowUser(req, res) {
   }
 }
 
+export async function getFollowState(req, res) {
+  const { userId } = res.locals
+  const { followedId } = req.params
+
+  try {
+    const resultFollow = await followRepository.verifyFollowUser(
+      userId,
+      followedId,
+    )
+    if (resultFollow.rows.length === 0) {
+      return res.status(200).send({ followState: false })
+    }
+    return res.status(200).send({ followState: true })
+  } catch (error) {
+    console.log(error)
+    res.status(500).send({ followState: false })
+  }
+}
+
 export async function getFollowCount(req, res) {
   const { userId } = res.locals
   try {
