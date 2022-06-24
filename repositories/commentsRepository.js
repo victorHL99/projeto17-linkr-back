@@ -1,7 +1,7 @@
 import db from "../config/db.js"
 
-export async function getComments(id) {
-    return db.query(`
+async function getComments(id) {
+  return db.query(`
     SELECT 
     comments.id
     , comments.post_id as "postId"
@@ -17,8 +17,8 @@ export async function getComments(id) {
     `, [parseInt(id)]);
 }
 
-export async function countComments(id) {
-    return db.query(`
+async function countComments(id) {
+  return db.query(`
     SELECT 
     comments.post_id as "postId"
     FROM comments
@@ -27,8 +27,24 @@ export async function countComments(id) {
     `, [parseInt(id)]);
 }
 
-export async function listFollows(id) {
-    return db.query(`
+
+async function insertComment(id, userId, message) {
+  return db.query(`INSERT INTO comments
+    (post_id, user_id, message)
+    VALUES ($1, $2, $3)`, [id, userId, message])
+}
+
+const commentsRepository = {
+  insertComment,
+  getComments,
+  countComments,
+  listFollows
+}
+
+export default commentsRepository;
+
+async function listFollows(id) {
+  return db.query(`
     SELECT 
     followed_id as "followedId"
     FROM follows 

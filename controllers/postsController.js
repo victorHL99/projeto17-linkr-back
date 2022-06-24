@@ -9,16 +9,19 @@ export async function getPosts(req, res) {
   const { userId } = res.locals
 
   try {
-    const result = await postsRepository.getPosts(
+    const {rows, count} = await postsRepository.getPosts(
       limit,
       order,
       direction,
       userId,
-    )
-
-    for (let i in result.rows) {
-      const post = result.rows[i]
-      try {
+      offset,
+      )
+    
+     
+      const total_pages = Math.ceil(count / limit) //total de paginas que podem ser renderizadas
+      for (let i in rows) {
+        const post = rows[i]
+        try {
         const metadata = await urlMetadata(post.sharedUrl)
 
         post.previewTitle = metadata.title
