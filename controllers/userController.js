@@ -16,9 +16,10 @@ export async function getUser(req, res) {
 
 export async function getUserByUsername(req, res) {
   const { username } = req.query
+  const { userId } = res.locals
 
   try {
-    const resultUsers = await userRepository.getUserByUsername(username)
+    const resultUsers = await userRepository.getUserByUsername(username, userId)
     return res.status(200).send(resultUsers.rows)
   } catch (error) {
     verboseConsoleLog("Error:", error)
