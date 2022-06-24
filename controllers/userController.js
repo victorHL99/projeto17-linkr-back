@@ -7,7 +7,6 @@ export async function getUser(req, res) {
 
   try {
     const result = await userRepository.getUserById(userId)
-    verboseConsoleLog("Result:", result.rows)
     return res.send(result.rows[0])
   } catch (error) {
     verboseConsoleLog("Error:", error)
@@ -22,6 +21,7 @@ export async function getUserByUsername(req, res) {
     const resultUsers = await userRepository.getUserByUsername(username)
     return res.status(200).send(resultUsers.rows)
   } catch (error) {
+    verboseConsoleLog("Error:", error)
     return res.status(500).send(error)
   }
 }
@@ -46,8 +46,8 @@ export async function followUser(req, res) {
         return res.status(400).send("You already follow this user")
       }
     } catch (error) {
-      console.log(error)
-      res.sendStatus(500)
+      verboseConsoleLog("Error:", error)
+      return res.sendStatus(500)
     }
   } else {
     return res.status(400).send("You can't follow yourself")
@@ -66,8 +66,8 @@ export async function unfollowUser(req, res) {
       )
       return res.status(200).send(resultUnfollow.rows)
     } catch (error) {
-      console.log(error)
-      res.sendStatus(500)
+      verboseConsoleLog("Error:", error)
+      return res.sendStatus(500)
     }
   } else {
     return res.status(400).send("You can't unfollow yourself")
@@ -88,7 +88,7 @@ export async function getFollowState(req, res) {
     }
     return res.status(200).send({ followState: true })
   } catch (error) {
-    console.log(error)
+    verboseConsoleLog("Error:", error)
     res.status(500).send({ followState: false })
   }
 }

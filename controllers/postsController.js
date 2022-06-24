@@ -69,7 +69,6 @@ export async function getPostsFromUserById(req, res) {
       }
     }
 
-    // verboseConsoleLog("Result:", result.rows)
     return res.send(result.rows)
   } catch (error) {
     verboseConsoleLog("Error:", error)
@@ -156,9 +155,12 @@ export async function createPost(req, res) {
         return res.status(500).send(error.message)
       }
     } catch (error) {
+      verboseConsoleLog("Error:", error)
       return res.send(error)
     }
-  } catch (error) {}
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+  }
 }
 
 export async function getPostsByHashtag(req, res) {
@@ -193,8 +195,9 @@ export async function deletePost(req, res) {
   try {
     await postsRepository.deletePostById(id)
     res.sendStatus(204)
-  } catch (e) {
-    return res.status(500).send(e.message)
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+    return res.status(500).send(error.message)
   }
 }
 
@@ -205,7 +208,8 @@ export async function updatePost(req, res) {
   try {
     await postsRepository.updatePost(id, message, userId)
     res.sendStatus(204)
-  } catch (e) {
-    return res.status(500).send(e.message)
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+    return res.status(500).send(error.message)
   }
 }

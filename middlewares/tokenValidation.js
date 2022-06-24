@@ -16,6 +16,7 @@ export async function tokenValidation(req, res, next) {
   try {
     const data = jwt.verify(token, secretKey)
   } catch {
+    verboseConsoleLog("Error:", error)
     return res.status(401).send("Invalid token!")
   }
   try {
@@ -30,7 +31,8 @@ export async function tokenValidation(req, res, next) {
     res.locals.userId = userSession.id
     res.locals.token = token
     next()
-  } catch (e) {
-    return res.status(500).send(e.message)
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+    return res.status(500).send(error.message)
   }
 }
