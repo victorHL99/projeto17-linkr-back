@@ -26,3 +26,16 @@ export async function getUserByUsername(req, res) {
     return res.status(500).send(error)
   }
 }
+
+export async function getFollowCount(req, res) {
+  const { userId } = res.locals
+  try {
+    const followCount = await userRepository.getFollowCount(userId)
+
+    if (!followCount.rowCount) return res.sendStatus(204)
+    else return res.send(followCount.rows[0].followCount)
+  } catch (error) {
+    verboseConsoleLog("Error:", error)
+    return res.sendStatus(500)
+  }
+}

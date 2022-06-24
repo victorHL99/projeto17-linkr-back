@@ -24,21 +24,33 @@ async function getUserById(userId) {
 }
 
 async function getUserByUsername(username) {
-  return(
-    db.query(`
+  return db.query(
+    `
     SELECT username,
     id AS "userId",
     profile_image AS "profileImage"
     from users 
     WHERE username 
-    LIKE $1`, [`%${username}%`])
+    LIKE $1`,
+    [`%${username}%`],
   )
+}
+
+async function getFollowCount(userId) {
+  let queryText = `SELECT 
+  count(follows.id) AS "followCount" 
+  FROM follows
+  WHERE follows.follower_id = $1
+  GROUP BY follows.follower_id`
+
+  return db.query(queryText, [userId])
 }
 
 const userRepository = {
   getIdUserByToken,
   getUserById,
   getUserByUsername,
+  getFollowCount,
 }
 
 export default userRepository

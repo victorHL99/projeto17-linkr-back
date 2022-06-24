@@ -2,6 +2,7 @@ import { Router } from "express"
 
 import {
   getPosts,
+  getPostsFromUserById,
   createPost,
   deletePost,
   getPostsByHashtag,
@@ -16,9 +17,9 @@ import newPostSchema from "../schemas/newPostSchema.js"
 
 const postsRouter = Router()
 
-postsRouter.get("/posts", getPosts)
+postsRouter.get("/posts", tokenValidation, getPosts)
+postsRouter.get("/posts/:userId", tokenValidation, getPostsFromUserById)
 postsRouter.get("/hashtag/:hashtag", getPostsByHashtag)
-postsRouter.get("/posts/:userId", getPosts)
 postsRouter.post(
   "/posts",
   validateSchema(newPostSchema),
