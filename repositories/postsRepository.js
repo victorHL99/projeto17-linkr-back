@@ -6,17 +6,23 @@ async function getPosts(
   limit,
   order = "createdAt",
   direction = "DESC",
+  parsedTime,
   userId,
 ) {
   const limitClause = limit ? `LIMIT ${SqlString.escape(limit)}` : ""
   const orderClause =
     order && direction ? `ORDER BY "${order}" ${direction}` : ""
+  const whereTimeClause = parsedTime
+    ? `AND p.created_at > ${SqlString.escape(parsedTime)}`
+    : ""
+  const whereTimeClauseRepost = parsedTime
+    ? `AND r.created_at > ${SqlString.escape(parsedTime)}`
+    : ""
   const joinFollowClause = userId
     ? `JOIN follows on p.user_id = follows.followed_id AND follows.follower_id = ${SqlString.escape(
         userId,
       )}`
     : ""
-
   const joinFollowClauseRepost = userId
     ? `JOIN follows on follows.follower_id = ${SqlString.escape(userId)}`
     : ""
@@ -45,6 +51,7 @@ async function getPosts(
   LEFT JOIN users u2 ON u2.id = r.user_id
   ${joinFollowClause}
   WHERE p.deleted IS NOT true
+  ${whereTimeClause}
   GROUP BY p.id, u.id, r.id, u2.username
   UNION ALL
   SELECT
@@ -71,6 +78,7 @@ async function getPosts(
   LEFT JOIN users u2 ON u2.id = r.user_id
   ${joinFollowClauseRepost}
   WHERE p.deleted IS NOT true AND p.user_id != 1
+  ${whereTimeClauseRepost}
   GROUP BY p.id, u.id, r.post_id, r.created_at, r.user_id, u2.username
   ${orderClause}
   ${limitClause}
