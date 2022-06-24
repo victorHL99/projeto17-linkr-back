@@ -17,11 +17,17 @@ export async function isLikedByUser(req, res) {
 
 export async function getLikedByWho(req, res) {
   const { postId, limit } = req.query
+  const { userId } = res.locals
 
   try {
-    const result = await likesRepository.getLikedByWho(postId, limit)
+    const result = await likesRepository.getLikedByWho(postId, limit, userId)
+    console.log("🚀 ~ result", result)
 
-    res.send(result.rows[0])
+    const likedBy = result.rows.map((row) => {
+      return row["likedBy"]
+    })
+
+    res.send(likedBy)
   } catch (error) {
     verboseConsoleLog("Error:", error)
     res.sendStatus(500)
