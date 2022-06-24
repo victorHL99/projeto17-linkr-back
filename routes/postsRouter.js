@@ -35,7 +35,7 @@ postsRouter.delete(
 postsRouter.put(
   "/posts/:id",
   tokenValidation,
-  validateSchema(newPostSchema),
+  /* validateSchema(newPostSchema), */
   updatePost,
 )
 
