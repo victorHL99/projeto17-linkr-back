@@ -167,6 +167,20 @@ export async function getPostsByHashtag(req, res) {
   try {
     const result = await postsRepository.getPostsByHash(hashtag)
 
+    for (let i in result.rows) {
+      const post = result.rows[i]
+      try {
+        const metadata = await urlMetadata(post.sharedUrl)
+
+        post.previewTitle = metadata.title
+        post.previewImage = metadata.image
+        post.previewDescription = metadata.description
+        post.previewUrl = metadata.url
+      } catch (error) {
+        verboseConsoleLog("Error:", error)
+      }
+    }
+
     return res.send(result.rows)
   } catch (error) {
     verboseConsoleLog("Error:", error)
