@@ -1,7 +1,6 @@
 import urlMetadata from "url-metadata"
 
 import postsRepository from "../repositories/postsRepository.js"
-import userRepository from "../repositories/userRepository.js"
 
 import verboseConsoleLog from "../utils/verboseConsoleLog.js"
 
