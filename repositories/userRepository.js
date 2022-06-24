@@ -31,7 +31,7 @@ async function getUserByUsername(username) {
     profile_image AS "profileImage"
     from users 
     WHERE username 
-    LIKE $1`,
+    ILIKE $1`,
     [`%${username}%`],
   )
 }

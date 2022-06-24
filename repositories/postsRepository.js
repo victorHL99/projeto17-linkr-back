@@ -18,6 +18,9 @@ async function getPosts(
   const whereTimeClauseRepost = parsedTime
     ? `AND r.created_at > ${SqlString.escape(parsedTime)}`
     : ""
+  const whereRepostClause = userId
+    ? ` AND follows.follower_id != ${SqlString.escape(userId)}`
+    : ""
   const joinFollowClause = userId
     ? `JOIN follows on p.user_id = follows.followed_id AND follows.follower_id = ${SqlString.escape(
         userId,
@@ -77,13 +80,13 @@ async function getPosts(
   JOIN users u ON u.id = p.user_id
   LEFT JOIN users u2 ON u2.id = r.user_id
   ${joinFollowClauseRepost}
-  WHERE p.deleted IS NOT true AND p.user_id != 1
+  WHERE p.deleted IS NOT true AND p.user_id != 1 ${whereRepostClause}
   ${whereTimeClauseRepost}
   GROUP BY p.id, u.id, r.post_id, r.created_at, r.user_id, u2.username
   ${orderClause}
   ${limitClause}
   `
-
+  console.log("🚀 ~ queryText", queryText)
   return db.query(queryText)
 }
 
