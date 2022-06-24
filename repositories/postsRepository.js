@@ -190,6 +190,7 @@ async function getPostsByHash(hashtag) {
     , posts.message
     , posts.shared_url as "sharedUrl"
     , posts.created_at as "createdAt"
+    , posts.user_id as "userId"
     , users.username
     , users.profile_image as "profileImage"
     , count(likes.post_id) as "likesCount"
