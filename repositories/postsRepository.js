@@ -4,13 +4,13 @@ import db from "../config/db.js"
 
 async function getPosts(
   limit,
-  order = "created_at",
+  order = "createdAt",
   direction = "DESC",
   userId,
 ) {
   const limitClause = limit ? `LIMIT ${SqlString.escape(limit)}` : ""
   const orderClause =
-    order && direction ? `ORDER BY posts.${order} ${direction}` : ""
+    order && direction ? `ORDER BY "${order}" ${direction}` : ""
   const joinFollowClause = userId
     ? `JOIN follows on p.user_id = follows.followed_id AND follows.follower_id = ${SqlString.escape(
         userId,
@@ -72,7 +72,7 @@ async function getPosts(
   ${joinFollowClauseRepost}
   WHERE p.deleted IS NOT true AND p.user_id != 1
   GROUP BY p.id, u.id, r.post_id, r.created_at, r.user_id, u2.username
-  ORDER BY "createdAt" DESC
+  ${orderClause}
   ${limitClause}
   `
 
@@ -81,13 +81,13 @@ async function getPosts(
 
 async function getPostsFromUserById(
   limit,
-  order = "created_at",
+  order = "createdAt",
   direction = "DESC",
   userId,
 ) {
   const limitClause = limit ? `LIMIT ${SqlString.escape(limit)}` : ""
   const orderClause =
-    order && direction ? `ORDER BY posts.${order} ${direction}` : ""
+    order && direction ? `ORDER BY "${order}" ${direction}` : ""
   const whereClause = userId ? `AND u.id = ${SqlString.escape(userId)}` : ""
   const whereClauseRepost = userId
     ? `AND u2.id = ${SqlString.escape(userId)}`
@@ -142,7 +142,7 @@ async function getPostsFromUserById(
   LEFT JOIN users u2 ON u2.id = r.user_id
   WHERE p.deleted IS NOT true ${whereClauseRepost}
   GROUP BY p.id, u.id, r.post_id, r.created_at, r.user_id, u2.username
-  ORDER BY "createdAt" DESC
+  ${orderClause}
   ${limitClause}`
 
   return db.query(queryText)
