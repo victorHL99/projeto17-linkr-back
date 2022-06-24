@@ -1,5 +1,6 @@
 import userRepository from "../repositories/userRepository.js"
 import verboseConsoleLog from "../utils/verboseConsoleLog.js"
+import followRepository from "../repositories/followRepository.js"
 
 export async function getUser(req, res) {
   const { userId } = req.params
@@ -19,11 +20,76 @@ export async function getUserByUsername(req, res) {
 
   try {
     const resultUsers = await userRepository.getUserByUsername(username)
-    verboseConsoleLog("Result:", resultUsers.rows)
     return res.status(200).send(resultUsers.rows)
   } catch (error) {
-    verboseConsoleLog("Error:", error)
     return res.status(500).send(error)
+  }
+}
+
+export async function followUser(req, res) {
+  const { followedId } = req.params
+  const { followerId } = req.body
+
+  if (followedId !== followerId) {
+    try {
+      const resultByVerifyFollow = await followRepository.verifyFollowUser(
+        followerId,
+        followedId,
+      )
+      if (resultByVerifyFollow.rows.length === 0) {
+        const resultFollow = await followRepository.followUser(
+          followerId,
+          followedId,
+        )
+        return res.status(200).send(resultFollow.rows)
+      } else {
+        return res.status(400).send("You already follow this user")
+      }
+    } catch (error) {
+      console.log(error)
+      res.sendStatus(500)
+    }
+  } else {
+    return res.status(400).send("You can't follow yourself")
+  }
+}
+
+export async function unfollowUser(req, res) {
+  const { followedId } = req.params
+  const { userId } = res.locals
+
+  if (followedId !== userId) {
+    try {
+      const resultUnfollow = await followRepository.unfollowUser(
+        userId,
+        followedId,
+      )
+      return res.status(200).send(resultUnfollow.rows)
+    } catch (error) {
+      console.log(error)
+      res.sendStatus(500)
+    }
+  } else {
+    return res.status(400).send("You can't unfollow yourself")
+  }
+}
+
+export async function getFollowState(req, res) {
+  const { userId } = res.locals
+  const { followedId } = req.params
+
+  try {
+    const resultFollow = await followRepository.verifyFollowUser(
+      userId,
+      followedId,
+    )
+    if (resultFollow.rows.length === 0) {
+      return res.status(200).send({ followState: false })
+    }
+    return res.status(200).send({ followState: true })
+  } catch (error) {
+    console.log(error)
+    res.status(500).send({ followState: false })
   }
 }
 

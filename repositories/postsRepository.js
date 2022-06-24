@@ -145,8 +145,6 @@ async function getPostsFromUserById(
   ORDER BY "createdAt" DESC
   ${limitClause}`
 
-  console.log(queryText)
-
   return db.query(queryText)
 }
 
