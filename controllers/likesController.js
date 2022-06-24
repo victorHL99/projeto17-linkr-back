@@ -21,7 +21,6 @@ export async function getLikedByWho(req, res) {
 
   try {
     const result = await likesRepository.getLikedByWho(postId, limit, userId)
-    console.log("🚀 ~ result", result)
 
     const likedBy = result.rows.map((row) => {
       return row["likedBy"]

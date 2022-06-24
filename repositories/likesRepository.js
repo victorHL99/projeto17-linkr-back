@@ -25,8 +25,6 @@ async function getLikedByWho(postId, limit = 5, userId) {
   ${limitClause}
   ;`
 
-  console.log("🚀 ~ queryText", queryText)
-
   return db.query(queryText)
 }
 
