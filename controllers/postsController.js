@@ -185,7 +185,7 @@ export async function updatePost(req, res) {
   const { message } = req.body
   try {
     await postsRepository.updatePost(id, message, userId)
-    res.sendStatus(204)
+    res.sendStatus(201)
   } catch (e) {
     return res.status(500).send(e.message)
   }
