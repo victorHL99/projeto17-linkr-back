@@ -6,6 +6,7 @@ import postsRepository from "../repositories/postsRepository.js"
 import verboseConsoleLog from "../utils/verboseConsoleLog.js"
 
 export async function getPosts(req, res) {
+  console.time("Execution Time")
   const { limit, order, direction, from_time } = req.query
   const { userId } = res.locals
 
@@ -22,21 +23,26 @@ export async function getPosts(req, res) {
       userId,
     )
 
-    for (let i in result.rows) {
-      const post = result.rows[i]
-      try {
-        const metadata = await urlMetadata(post.sharedUrl)
+    try {
+      const postsWithMetadata = await Promise.all(
+        result.rows.map(async (post) => {
+          const metadata = await urlMetadata(post.sharedUrl)
 
-        post.previewTitle = metadata.title
-        post.previewImage = metadata.image
-        post.previewDescription = metadata.description
-        post.previewUrl = metadata.url
-      } catch (error) {
-        verboseConsoleLog("Error:", error)
-      }
+          post.previewTitle = metadata.title
+          post.previewImage = metadata.image
+          post.previewDescription = metadata.description
+          post.previewUrl = metadata.url
+
+          return { ...post }
+        }),
+      )
+
+      console.timeEnd("Execution Time")
+      return res.send(postsWithMetadata)
+    } catch (error) {
+      verboseConsoleLog("Error:", error)
+      return res.sendStatus(500)
     }
-
-    return res.send(result.rows)
   } catch (error) {
     verboseConsoleLog("Error:", error)
     return res.sendStatus(500)
